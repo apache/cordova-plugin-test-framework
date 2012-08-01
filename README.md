@@ -1,4 +1,4 @@
-# Cordova Laboratory
+# Cordova Labs
 
 > Caution: Safety Goggles are Recommended!
 
@@ -20,3 +20,23 @@ to this practice:
   a new git repository;
 - Working directory is not polluted with the files of other projects.
 - Projects will not step on each others toes.
+
+## Migrating Repositories
+
+One day, you labs project may grow up and need it's own repository.
+You can easily move all of your Git history to your new repository with the
+following steps:
+
+    # cd to labs and checkout your project's branch
+    git checkout my-branch
+
+    # add your new repository as a remote
+    git add remote my-remote <url>
+
+    # currently, my-remote should be empty (no commits)
+
+    # push my-branch to my-remote's master branch
+    git push my-remote my-branch:master
+
+    # now clone your new project (my-remote)
+    git clone <url>
