@@ -87,12 +87,13 @@ function runAutoTests() {
   var test = cordova.require('org.apache.cordova.test-framework.test');
   test.init(jasmine, contentEl, createButton, logger);
 
-  // TODO: get all installed plugins
-  var plugins = [
-      'org.apache.cordova.device',
-      'org.apache.cordova.device-motion',
-      'org.chromium.storage'
-    ];
+  var plugins = cordova.require('cordova/plugin_list')
+    .map(function(jsmodule) { return jsmodule.id.replace(/\.[^.]*$/,""); })
+    .sort()
+    .filter(function onlyUnique(value, index, self) {
+      return self.indexOf(value) === index;
+    });
+  logger(JSON.stringify(plugins, null, 2));
 
   plugins.forEach(function(id) {
     var tests;

@@ -14,4 +14,9 @@ html, body {
 
 #log {
   background-color: white;
+  white-space: pre;
+}
+
+#log > div {
+  border-bottom: 1px solid #ccc;
 }
