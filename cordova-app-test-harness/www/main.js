@@ -88,19 +88,20 @@ function runAutoTests() {
   test.init(jasmine, contentEl, createButton, logger);
 
   var plugins = cordova.require('cordova/plugin_list')
-    .map(function(jsmodule) { return jsmodule.id.replace(/\.[^.]*$/,""); })
-    .sort()
-    .filter(function onlyUnique(value, index, self) {
-      return self.indexOf(value) === index;
+    .map(function(jsmodule) {
+      return jsmodule.id;
+    })
+    .filter(function(id) {
+      return /.tests$/.test(id);
     });
-  logger(JSON.stringify(plugins, null, 2));
 
   plugins.forEach(function(id) {
     var tests;
     try {
-      tests = cordova.require(id + '.tests');
+      tests = cordova.require(id);
+      logger('Loaded:', id);
     } catch(ex) {
-      logger('Failed to load tests for: ' + id);
+      logger('Failed to load:', id);
       return;
     }
     tests.init();
