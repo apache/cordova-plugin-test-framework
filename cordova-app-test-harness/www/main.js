@@ -5,10 +5,6 @@
 'use strict';
 
 function getURLParameter(name) {
-  /*var queryString = new jasmine.QueryString({
-    getWindowLocation: function() { return window.location; }
-  });
-  return queryString.getParam(name);*/
   return decodeURIComponent(
       (new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [,""])[1].replace(/\+/g, '%20')
     ) || null;
@@ -83,6 +79,14 @@ function runAutoTests() {
   setTitle('Auto Tests');
   createButton('Back', function() { location.href = 'index.html'; });
 
+  var jasmine = jasmineRequire.core(jasmineRequire);
+  jasmineRequire.html(jasmine);
+
+  var jasmineEnv = jasmine.getEnv();
+  var contentEl = document.getElementById('content');
+  var test = cordova.require('org.apache.cordova.test-framework.test');
+  test.init(jasmine, contentEl, createButton, logger);
+
   // TODO: get all installed plugins
   var plugins = [
       'org.apache.cordova.device',
@@ -95,13 +99,37 @@ function runAutoTests() {
     try {
       tests = cordova.require(id + '.tests');
     } catch(ex) {
-      logger('Failed to load tests: ' + id);
+      logger('Failed to load tests for: ' + id);
       return;
     }
     tests.init();
   });
 
-  var test = cordova.require('org.apache.cordova.test-framework.test');
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 300;
+
+  var catchingExceptions = getURLParameter("catch");
+  jasmineEnv.catchExceptions(typeof catchingExceptions === "undefined" ? true : catchingExceptions);
+
+  var specFilter = new jasmine.HtmlSpecFilter({
+    filterString: function() { return getURLParameter("spec"); }
+  });
+
+  jasmineEnv.specFilter = function(spec) {
+    return specFilter.matches(spec.getFullName());
+  };
+
+  var htmlReporter = new jasmine.HtmlReporter({
+    env: jasmineEnv,
+    queryString: getURLParameter,
+    onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
+    getContainer: function() { return contentEl; },
+    createElement: function() { return document.createElement.apply(document, arguments); },
+    createTextNode: function() { return document.createTextNode.apply(document, arguments); },
+    timer: new jasmine.Timer()
+  });
+  htmlReporter.initialize();
+  jasmineEnv.addReporter(htmlReporter);
+
   test.runAutoTests();
 }
 
@@ -125,9 +153,6 @@ function loaded() {
 }
 
 function ready() {
-  var test = cordova.require('org.apache.cordova.test-framework.test');
-  test.init(document.getElementById('content'), createButton, logger);
-
   var mode = getMode();
   logger(mode);
   if (mode === 'main')

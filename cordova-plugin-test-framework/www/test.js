@@ -30,14 +30,12 @@ var contentEl,
 
 /******************************************************************************/
 
-exports.init = function(contentEl_, createActionButtonFn_, logFn_) {
+exports.init = function(jasmine_, contentEl_, createActionButtonFn_, logFn_) {
+  jasmine = jasmine_;
   contentEl = contentEl_;
   createActionButtonFn = createActionButtonFn_;
   logFn = logFn_;
 
-
-  jasmine = jasmineRequire.core(jasmineRequire);
-  jasmineRequire.html(jasmine);
 
   jasmineEnv = jasmine.getEnv();
 
@@ -90,43 +88,13 @@ exports.init = function(contentEl_, createActionButtonFn_, logFn_) {
 
     jasmine: jasmine,
   };
+
+  jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
 }
 
 /******************************************************************************/
 
 exports.runAutoTests = function() {
-  var queryString = new jasmine.QueryString({
-    getWindowLocation: function() { return window.location; }
-  });
-
-  jasmine.DEFAULT_TIMEOUT_INTERVAL = 300;
-
-  // TODO: move all of catching to raise so we don't break our brains
-  var catchingExceptions = queryString.getParam("catch");
-  jasmineEnv.catchExceptions(typeof catchingExceptions === "undefined" ? true : catchingExceptions);
-
-  var htmlReporter = new jasmine.HtmlReporter({
-    env: jasmineEnv,
-    queryString: queryString,
-    onRaiseExceptionsClick: function() { queryString.setParam("catch", !jasmineEnv.catchingExceptions()); },
-    getContainer: function() { return contentEl; },
-    createElement: function() { return document.createElement.apply(document, arguments); },
-    createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-    timer: new jasmine.Timer()
-  });
-
-  jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
-  jasmineEnv.addReporter(htmlReporter);
-
-  var specFilter = new jasmine.HtmlSpecFilter({
-    filterString: function() { return queryString.getParam("spec"); }
-  });
-
-  jasmineEnv.specFilter = function(spec) {
-    return specFilter.matches(spec.getFullName());
-  };
-
-  htmlReporter.initialize();
   jasmineEnv.execute();
 }
 
