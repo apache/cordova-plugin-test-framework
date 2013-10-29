@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:rim="http://www.blackberry.com/ns/widgets"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="org.apache.cordova.test-framework"
+    version="0.1">
+    <name>Test Framework</name>
+    <description>Cordova Test Framework Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,test</keywords>
+
+    <js-module src="www/test.js" name="test" />
+
+</plugin>
