@@ -11,7 +11,12 @@ function getURLParameter(name) {
 }
 
 function getMode() {
-  return getURLParameter('mode') || 'main';
+  return getURLParameter('mode') || localStorage['mode'] || 'main';
+}
+
+function setMode(mode) {
+  localStorage['mode'] = mode;
+  location.href = 'index.html?mode=' + mode;
 }
 
 function setTitle(title) {
@@ -48,8 +53,8 @@ function logger() {
 
 function runMain() {
   setTitle('Cordova Tests');
-  createButton('Auto Tests', function() { location.href = 'index.html?mode=autotests'; });
-  createButton('Manual Tests', function() { location.href = 'index.html?mode=manualtests'; });
+  createButton('Auto Tests', function() { setMode('autotests'); });
+  createButton('Manual Tests', function() { setMode('manualtests'); });
 
   setDeviceInfo();
 }
@@ -77,7 +82,7 @@ function setDeviceInfo() {
 
 function runAutoTests() {
   setTitle('Auto Tests');
-  createButton('Back', function() { location.href = 'index.html'; });
+  createButton('Back', function() { setMode('main'); });
 
   var jasmine = jasmineRequire.core(jasmineRequire);
   jasmineRequire.html(jasmine);
@@ -139,14 +144,14 @@ function runAutoTests() {
 
 function runManualTests() {
   setTitle('Manual Tests');
-  createButton('Back', function() { location.href = 'index.html'; });
+  createButton('Back', function() { setMode('main'); });
 }
 
 /******************************************************************************/
 
 function runUnknownMode() {
   setTitle('Unknown Mode');
-  createButton('Reset', function() { location.href = 'index.html'; });
+  createButton('Reset', function() { setMode('main'); });
 }
 
 /******************************************************************************/
