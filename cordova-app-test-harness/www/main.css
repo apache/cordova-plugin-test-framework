@@ -5,15 +5,36 @@ html, body {
   margin: 0;
 }
 
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  /*line-height: 1.4em;*/
+}
+
 #title {
+  position: fixed;
+  height: 30px;
+  width: 100%;
+  top: 0;
+
   background-color: #58b;
+  font-size: 25px;
+  text-align: center;
 }
 
 #content {
+  padding-top: 30px;
+  padding-bottom: 150px;
 }
 
 #log {
+  position: fixed;
+  height: 150px;
+  width: 100%;
+  bottom: 0;
+
   background-color: white;
+  border-top: 2px solid #777;
   white-space: pre;
 }
 
