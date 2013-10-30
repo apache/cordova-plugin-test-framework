@@ -20,25 +20,44 @@
 */
 
 /******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+// Common
 
 var contentEl,
     createActionButtonFn,
-    logFn,
-    jasmine,
+    logFn;
+
+/******************************************************************************/
+
+exports.init = function(contentEl_, createActionButtonFn_, logFn_) {
+  contentEl = contentEl_;
+  createActionButtonFn = createActionButtonFn_;
+  logFn = logFn_;
+};
+
+/******************************************************************************/
+
+Object.defineProperty(exports, "log", {
+    get: function() { return logFn; }
+});
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+// Auto Tests
+
+(function() {
+
+var jasmine,
     jasmineEnv,
     jasmineInterface;
 
 /******************************************************************************/
 
-exports.init = function(jasmine_, contentEl_, createActionButtonFn_, logFn_) {
+exports.initForAutoTests = function(jasmine_) {
   jasmine = jasmine_;
-  contentEl = contentEl_;
-  createActionButtonFn = createActionButtonFn_;
-  logFn = logFn_;
-
-
   jasmineEnv = jasmine.getEnv();
-
   jasmineInterface = {
     describe: function(description, specDefinitions) {
       return jasmineEnv.describe(description, specDefinitions);
@@ -90,17 +109,16 @@ exports.init = function(jasmine_, contentEl_, createActionButtonFn_, logFn_) {
   };
 
   jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
-}
+};
 
 /******************************************************************************/
 
 exports.runAutoTests = function() {
   jasmineEnv.execute();
-}
+};
 
 /******************************************************************************/
 
-// eval this!
 exports.injectJasmineInterface = function(target, targetName) {
   var ret = "";
   for (var property in jasmineInterface) {
@@ -108,12 +126,32 @@ exports.injectJasmineInterface = function(target, targetName) {
     ret += 'var ' + property + ' = this[\'' + property + '\'];\n';
   }
   return ret;
-}
+};
+
+/******************************************************************************/
+
+}());
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+// Manual Tests
+
+(function () {
+
+/******************************************************************************/
+
+exports.initForManualTests = function() {
+};
 
 /******************************************************************************/
 
 exports.addManualTest = function(title, handler) {
   createActionButtonFn(title, handler);
-}
+};
+
+/******************************************************************************/
+
+}());
 
 /******************************************************************************/

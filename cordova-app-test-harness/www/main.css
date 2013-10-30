@@ -8,7 +8,6 @@ html, body {
 *, *:before, *:after {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  /*line-height: 1.4em;*/
 }
 
 #title {
@@ -16,10 +15,12 @@ html, body {
   height: 30px;
   width: 100%;
   top: 0;
+  z-index: 1000;
 
   background-color: #58b;
   font-size: 25px;
   text-align: center;
+  font-weight: bold;
 }
 
 #content {
@@ -32,6 +33,7 @@ html, body {
   height: 150px;
   width: 100%;
   bottom: 0;
+  z-index: 1000;
 
   background-color: white;
   border-top: 2px solid #777;

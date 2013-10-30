@@ -40,6 +40,7 @@ function createButton(title, callback) {
 
 function logger() {
   console.log.apply(console, Array.prototype.slice.apply(arguments));
+  //console.trace();
   var el = document.getElementById('log');
   var div = document.createElement('div');
   div.textContent = Array.prototype.slice.apply(arguments).map(function(arg) {
@@ -80,43 +81,33 @@ function setDeviceInfo() {
 
 /******************************************************************************/
 
-function runAutoTests() {
-  setTitle('Auto Tests');
-  createButton('Back', function() { setMode('main'); });
-
-  var jasmine = jasmineRequire.core(jasmineRequire);
-  jasmineRequire.html(jasmine);
-
-  var jasmineEnv = jasmine.getEnv();
-  var contentEl = document.getElementById('content');
-  var test = cordova.require('org.apache.cordova.test-framework.test');
-  test.init(jasmine, contentEl, createButton, logger);
-
-  var plugins = cordova.require('cordova/plugin_list')
+function getPluginTestsJsModules() {
+  return cordova.require('cordova/plugin_list')
     .map(function(jsmodule) {
       return jsmodule.id;
     })
     .filter(function(id) {
       return /.tests$/.test(id);
     });
+}
 
-  plugins.forEach(function(id) {
-    var tests;
-    try {
-      tests = cordova.require(id);
-      logger('Loaded:', id);
-    } catch(ex) {
-      logger('Failed to load:', id);
-      return;
-    }
-    tests.init();
-  });
+/******************************************************************************/
+
+function runAutoTests() {
+  setTitle('Auto Tests');
+  createButton('Back', function() { setMode('main'); });
+
+  // Set up jasmine
+  var jasmine = jasmineRequire.core(jasmineRequire);
+  jasmineRequire.html(jasmine);
+  var jasmineEnv = jasmine.getEnv();
 
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 300;
 
   var catchingExceptions = getURLParameter("catch");
   jasmineEnv.catchExceptions(typeof catchingExceptions === "undefined" ? true : catchingExceptions);
 
+  /*
   var specFilter = new jasmine.HtmlSpecFilter({
     filterString: function() { return getURLParameter("spec"); }
   });
@@ -124,7 +115,10 @@ function runAutoTests() {
   jasmineEnv.specFilter = function(spec) {
     return specFilter.matches(spec.getFullName());
   };
+  */
 
+  // Set up jasmine html reporter
+  var contentEl = document.getElementById('content');
   var htmlReporter = new jasmine.HtmlReporter({
     env: jasmineEnv,
     queryString: getURLParameter,
@@ -135,8 +129,27 @@ function runAutoTests() {
     timer: new jasmine.Timer()
   });
   htmlReporter.initialize();
+
   jasmineEnv.addReporter(htmlReporter);
 
+  // Define our tests
+  var test = cordova.require('org.apache.cordova.test-framework.test');
+  logger(test);
+  test.initForAutoTests(jasmine);
+
+  getPluginTestsJsModules().forEach(function(id) {
+    var tests;
+    try {
+      tests = cordova.require(id);
+    } catch(ex) {
+      logger('Failed to load:', id);
+      return;
+    }
+    tests.init();
+    logger('Loaded:', id);
+  });
+
+  // Run!
   test.runAutoTests();
 }
 
@@ -145,6 +158,10 @@ function runAutoTests() {
 function runManualTests() {
   setTitle('Manual Tests');
   createButton('Back', function() { setMode('main'); });
+
+  var contentEl = document.getElementById('content');
+  var test = cordova.require('org.apache.cordova.test-framework.test');
+  test.initForManualTests();
 }
 
 /******************************************************************************/
@@ -156,12 +173,15 @@ function runUnknownMode() {
 
 /******************************************************************************/
 
-function loaded() {
-}
+document.addEventListener("DOMContentLoaded", function() {
+});
 
-function ready() {
+document.addEventListener("deviceready", function() {
+  var contentEl = document.getElementById('content');
+  var test = cordova.require('org.apache.cordova.test-framework.test');
+  test.init(contentEl, createButton, logger);
+
   var mode = getMode();
-  logger(mode);
   if (mode === 'main')
     runMain();
   else if (mode === 'autotests')
@@ -170,10 +190,7 @@ function ready() {
     runManualTests();
   else
     runUnknownMode();
-}
-
-document.addEventListener("DOMContentLoaded", loaded);
-document.addEventListener("deviceready", ready);
+});
 
 /******************************************************************************/
 
