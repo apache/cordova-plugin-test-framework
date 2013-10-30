@@ -100,6 +100,7 @@ function runAutoTests() {
   // Set up jasmine
   var jasmine = jasmineRequire.core(jasmineRequire);
   jasmineRequire.html(jasmine);
+  jasmineRequire.CouchDB(jasmine);
   var jasmineEnv = jasmine.getEnv();
 
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 300;
@@ -131,6 +132,19 @@ function runAutoTests() {
   htmlReporter.initialize();
 
   jasmineEnv.addReporter(htmlReporter);
+
+  var reporteroptions =  {serverip: 'http://172.23.188.139:5900', serverpublic: 'http://172.23.188.139:5900', sha: "test"};
+  var ciReporter = new jasmine.CouchDBReporter({
+      env: jasmineEnv,
+      queryString: getURLParameter,
+      onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
+      getContainer: function() { return contentEl; },
+      createElement: function() { return document.createElement.apply(document, arguments); },
+      createTextNode: function() { return document.createTextNode.apply(document, arguments); },
+      timer: new jasmine.Timer() ,
+      couch: reporteroptions
+  });
+  jasmineEnv.addReporter(ciReporter);
 
   // Define our tests
   var test = cordova.require('org.apache.cordova.test-framework.test');
