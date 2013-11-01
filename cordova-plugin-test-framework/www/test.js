@@ -146,8 +146,18 @@ exports.initForManualTests = function() {
 
 /******************************************************************************/
 
-exports.addManualTest = function(title, handler) {
-  createActionButtonFn(title, handler);
+exports.addManualTestFn = function(title, fn) {
+  createActionButtonFn(title, fn);
+};
+
+/******************************************************************************/
+
+exports.addManualTestPage = function(title, url) {
+  createActionButtonFn(title, function() {
+    // TODO: This should probably have a way to get back.
+    // Perhaps open the page in a frame?
+    window.href = url;
+  });
 };
 
 /******************************************************************************/
