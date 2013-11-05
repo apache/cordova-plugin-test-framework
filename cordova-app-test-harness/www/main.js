@@ -117,35 +117,11 @@ function runAutoTests() {
     return specFilter.matches(spec.getFullName());
   };
   */
+  createHtmlReporter(jasmine);
+  createCouchdbReporter(jasmine, function(){runtests(jasmine);});
+}
 
-  // Set up jasmine html reporter
-  var contentEl = document.getElementById('content');
-  var htmlReporter = new jasmine.HtmlReporter({
-    env: jasmineEnv,
-    queryString: getURLParameter,
-    onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
-    getContainer: function() { return contentEl; },
-    createElement: function() { return document.createElement.apply(document, arguments); },
-    createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-    timer: new jasmine.Timer()
-  });
-  htmlReporter.initialize();
-
-  jasmineEnv.addReporter(htmlReporter);
-
-  var reporteroptions =  {serverip: 'http://172.23.188.139:5900', serverpublic: 'http://172.23.188.139:5900', sha: "test"};
-  var ciReporter = new jasmine.CouchDBReporter({
-      env: jasmineEnv,
-      queryString: getURLParameter,
-      onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
-      getContainer: function() { return contentEl; },
-      createElement: function() { return document.createElement.apply(document, arguments); },
-      createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-      timer: new jasmine.Timer() ,
-      couch: reporteroptions
-  });
-  jasmineEnv.addReporter(ciReporter);
-
+function runtests(jasmine){
   // Define our tests
   var test = cordova.require('org.apache.cordova.test-framework.test');
   logger(test);
@@ -165,6 +141,57 @@ function runAutoTests() {
 
   // Run!
   test.runAutoTests();
+
+}
+function createHtmlReporter(jasmine) {
+   // Set up jasmine html reporter
+  var jasmineEnv = jasmine.getEnv();
+  var contentEl = document.getElementById('content');
+  var htmlReporter = new jasmine.HtmlReporter({
+    env: jasmineEnv,
+    queryString: getURLParameter,
+    onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
+    getContainer: function() { return contentEl; },
+    createElement: function() { return document.createElement.apply(document, arguments); },
+    createTextNode: function() { return document.createTextNode.apply(document, arguments); },
+    timer: new jasmine.Timer()
+  });
+  htmlReporter.initialize();
+
+  jasmineEnv.addReporter(htmlReporter);
+}
+ 
+function createCouchdbReporter(jasmine, callback) {
+  var settings = cordova.require('org.apache.cordova.appsettings.appsettings');
+  settings.get( function(dbsettings){configureCouchReporter(dbsettings,jasmine,callback);},
+              function(){configureCouchReporter(null,jasmine,callback);},
+              ["CouchdbUrl", "CouchdbPrivateUrl","TestSha"]);
+}
+             
+function configureCouchReporter(dbsettings, jasmine, callback){
+    if(dbsettings) {
+      try{
+        var reporteroptions =  {serverip: dbsettings['CouchdbUrl'],
+          serverpublic: dbsettings['CouchdbPrivateUrl'],
+          sha: dbsettings['TestSha']};
+        var ciReporter = new jasmine.CouchDBReporter({
+          env: jasmine.getEnv(),
+          queryString: getURLParameter,
+          onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
+          getContainer: function() { return contentEl; },
+          createElement: function() { return document.createElement.apply(document, arguments); },
+          createTextNode: function() { return document.createTextNode.apply(document, arguments); },
+          timer: new jasmine.Timer() ,
+          couch: reporteroptions});
+ 
+        jasmine.getEnv().addReporter(ciReporter);
+      } catch(ex) {
+        logger('Invalid CouchDB settings:', ex);
+      }
+    } else {
+      logger('CouchDB Settings unavailable.' );
+    }
+    callback();
 }
 
 /******************************************************************************/
