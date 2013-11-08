@@ -117,32 +117,30 @@ function runAutoTests() {
     return specFilter.matches(spec.getFullName());
   };
   */
+
   createHtmlReporter(jasmine);
-  createCouchdbReporter(jasmine, function(){runtests(jasmine);});
-}
+  createCouchdbReporter(jasmine, function() {
+    var test = cordova.require('org.apache.cordova.test-framework.test');
+    test.initForAutoTests(jasmine);
 
-function runtests(jasmine){
-  // Define our tests
-  var test = cordova.require('org.apache.cordova.test-framework.test');
-  logger(test);
-  test.initForAutoTests(jasmine);
+    // Define our tests
+    getPluginTestsJsModules().forEach(function(id) {
+      var tests;
+      try {
+        tests = cordova.require(id);
+      } catch(ex) {
+        logger('Failed to load:', id);
+        return;
+      }
+      tests.init();
+      logger('Loaded:', id);
+    });
 
-  getPluginTestsJsModules().forEach(function(id) {
-    var tests;
-    try {
-      tests = cordova.require(id);
-    } catch(ex) {
-      logger('Failed to load:', id);
-      return;
-    }
-    tests.init();
-    logger('Loaded:', id);
+    // Run!
+    test.runAutoTests();
   });
-
-  // Run!
-  test.runAutoTests();
-
 }
+
 function createHtmlReporter(jasmine) {
    // Set up jasmine html reporter
   var jasmineEnv = jasmine.getEnv();
@@ -160,38 +158,47 @@ function createHtmlReporter(jasmine) {
 
   jasmineEnv.addReporter(htmlReporter);
 }
- 
+
 function createCouchdbReporter(jasmine, callback) {
   var settings = cordova.require('org.apache.cordova.appsettings.appsettings');
-  settings.get( function(dbsettings){configureCouchReporter(dbsettings,jasmine,callback);},
-              function(){configureCouchReporter(null,jasmine,callback);},
-              ["CouchdbUrl", "CouchdbPrivateUrl","TestSha"]);
+  var win = function(dbsettings) {
+    configureCouchReporter(dbsettings,jasmine,callback);
+  };
+  var fail = function() {
+    configureCouchReporter(null,jasmine,callback);
+  };
+  settings.get(win, fail, ["CouchdbUrl", "CouchdbPrivateUrl", "TestSha"]);
 }
-             
-function configureCouchReporter(dbsettings, jasmine, callback){
-    if(dbsettings) {
-      try{
-        var reporteroptions =  {serverip: dbsettings['CouchdbUrl'],
-          serverpublic: dbsettings['CouchdbPrivateUrl'],
-          sha: dbsettings['TestSha']};
-        var ciReporter = new jasmine.CouchDBReporter({
-          env: jasmine.getEnv(),
-          queryString: getURLParameter,
-          onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
-          getContainer: function() { return contentEl; },
-          createElement: function() { return document.createElement.apply(document, arguments); },
-          createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-          timer: new jasmine.Timer() ,
-          couch: reporteroptions});
- 
-        jasmine.getEnv().addReporter(ciReporter);
-      } catch(ex) {
-        logger('Invalid CouchDB settings:', ex);
-      }
-    } else {
-      logger('CouchDB Settings unavailable.' );
+
+function configureCouchReporter(dbsettings, jasmine, callback) {
+    if (!dbsettings) {
+      console.warn('Not reporting results to CouchDB.');
+      return callback();
     }
-    callback();
+
+    try {
+      var reporteroptions = {
+        serverip: dbsettings['CouchdbUrl'],
+        serverpublic: dbsettings['CouchdbPrivateUrl'],
+        sha: dbsettings['TestSha'],
+      };
+      var ciReporter = new jasmine.CouchDBReporter({
+        env: jasmine.getEnv(),
+        queryString: getURLParameter,
+        onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
+        getContainer: function() { return contentEl; },
+        createElement: function() { return document.createElement.apply(document, arguments); },
+        createTextNode: function() { return document.createTextNode.apply(document, arguments); },
+        timer: new jasmine.Timer(),
+        couch: reporteroptions
+      });
+
+      jasmine.getEnv().addReporter(ciReporter);
+    } catch(ex) {
+      logger('Invalid CouchDB settings:', ex);
+    }
+
+    return callback();
 }
 
 /******************************************************************************/
