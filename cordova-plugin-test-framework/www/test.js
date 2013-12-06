@@ -50,63 +50,34 @@ Object.defineProperty(exports, "log", {
 (function() {
 
 var jasmine,
-    jasmineEnv,
     jasmineInterface;
 
 /******************************************************************************/
 
 exports.initForAutoTests = function(jasmine_) {
   jasmine = jasmine_;
-  jasmineEnv = jasmine.getEnv();
-  jasmineInterface = {
-    describe: function(description, specDefinitions) {
-      return jasmineEnv.describe(description, specDefinitions);
-    },
+  jasmineInterface = {};
 
-    xdescribe: function(description, specDefinitions) {
-      return jasmineEnv.xdescribe(description, specDefinitions);
-    },
+  var jasmineEnv = jasmine.getEnv();
 
-    it: function(desc, func) {
-      return jasmineEnv.it(desc, func);
-    },
-
-    xit: function(desc, func) {
-      return jasmineEnv.xit(desc, func);
-    },
-
-    beforeEach: function(beforeEachFunction) {
-      return jasmineEnv.beforeEach(beforeEachFunction);
-    },
-
-    afterEach: function(afterEachFunction) {
-      return jasmineEnv.afterEach(afterEachFunction);
-    },
-
-    expect: function(actual) {
-      return jasmineEnv.expect(actual);
-    },
-
-    pending: function() {
-      return jasmineEnv.pending();
-    },
-
-    addMatchers: function(matchers) {
-      return jasmineEnv.addMatchers(matchers);
-    },
-
-    spyOn: function(obj, methodName) {
-      return jasmineEnv.spyOn(obj, methodName);
-    },
-
-    clock: jasmineEnv.clock,
-
-    jsApiReporter: new jasmine.JsApiReporter({
-      timer: new jasmine.Timer()
-    }),
-
-    jasmine: jasmine,
-  };
+  // Fill in jasmineInterface
+  var jasmine_functions = ['describe',
+                           'xdescribe',
+                           'it',
+                           'xit',
+                           'beforeEach',
+                           'afterEach',
+                           'expect',
+                           'pending',
+                           'addMatchers',
+                           'spyOn'];
+  jasmine_functions.forEach(function(fn) {
+    jasmineInterface[fn] = jasmineEnv[fn].bind(jasmineEnv);
+  });
+  jasmineInterface.clock = jasmineEnv.clock;
+  jasmineInterface.jsApiReporter = new jasmine.JsApiReporter({ timer: new jasmine.Timer() });
+  jasmineInterface.jasmine = jasmine;
+  jasmineInterface.log = exports.log;
 
   jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
 };
@@ -114,7 +85,7 @@ exports.initForAutoTests = function(jasmine_) {
 /******************************************************************************/
 
 exports.runAutoTests = function() {
-  jasmineEnv.execute();
+  jasmine.getEnv().execute();
 };
 
 /******************************************************************************/
