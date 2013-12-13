@@ -10,6 +10,8 @@
     <license>Apache 2.0</license>
     <keywords>cordova,test</keywords>
 
+    <dependency id="org.apache.cordova.appsettings" url="." subdir="cordova-plugin-appsettings" />
+
     <js-module src="www/test.js" name="test" />
 
     <!-- android -->
