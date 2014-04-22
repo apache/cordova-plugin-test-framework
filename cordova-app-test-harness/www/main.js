@@ -1,31 +1,49 @@
 (function() {
 
-/******************************************************************************/
-
 'use strict';
 
-function getURLParameter(name) {
-  return decodeURIComponent(
-      (new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [,""])[1].replace(/\+/g, '%20')
-    ) || null;
-}
+/******************************************************************************/
 
-function getMode() {
-  return getURLParameter('mode') || localStorage['mode'] || 'main';
+function getMode(callback) {
+  var mode = localStorage.getItem('mode') || 'main';
+  console.log(mode);
+  callback(mode);
 }
 
 function setMode(mode) {
-  localStorage['mode'] = mode;
-  location.href = 'index.html?mode=' + mode;
+  var handlers = {
+    'main': runMain,
+    'auto': runAutoTests,
+    'manual': runManualTests
+  }
+  if (!handlers.hasOwnProperty(mode)) {
+    return console.error("Unsopported mode: " + mode);
+  }
+
+  localStorage.setItem('mode', mode);
+  window.clearContent();
+
+  handlers[mode]();
 }
 
-function setTitle(title) {
+/******************************************************************************/
+
+window.clearContent = function() {
+  var content = document.getElementById('content');
+  content.innerHTML = '';
+  var log = document.getElementById('log--content');
+  log.innerHTML = '';
+  var buttons = document.getElementById('buttons');
+  buttons.innerHTML = '';
+}
+
+window.setTitle = function(title) {
   var el = document.getElementById('title');
   el.textContent = title;
 }
 
-function createButton(title, callback) {
-  var content = document.getElementById('content');
+window.createActionButton = function(title, callback) {
+  var buttons = document.getElementById('buttons');
   var div = document.createElement('div');
   var button = document.createElement('a');
   button.textContent = title;
@@ -35,209 +53,83 @@ function createButton(title, callback) {
   };
   button.classList.add('topcoat-button');
   div.appendChild(button);
-  content.appendChild(div);
+  buttons.appendChild(div);
 }
 
-function logger() {
-  console.log.apply(console, Array.prototype.slice.apply(arguments));
-  //console.trace();
-  var el = document.getElementById('log');
+// TODO: make a better logger
+window.logger = function() {
+  console.log.apply(console, arguments);
+  window.medic.log.apply(window.medic.log, arguments);
+
+  var el = document.getElementById('log--content');
   var div = document.createElement('div');
+  div.classList.add('log--content--line');
   div.textContent = Array.prototype.slice.apply(arguments).map(function(arg) {
       return (typeof arg === 'string') ? arg : JSON.stringify(arg);
     }).join(' ');
   el.appendChild(div);
+  // scroll to bottom
   el.scrollTop = el.scrollHeight;
-}
-
-/******************************************************************************/
-
-function runMain() {
-  setTitle('Cordova Tests');
-  createButton('Auto Tests', function() { setMode('autotests'); });
-  createButton('Manual Tests', function() { setMode('manualtests'); });
-
-  setDeviceInfo();
-}
-
-function setDeviceInfo() {
-  var el = document.getElementById('content');
-  function display() {
-    var div = document.createElement('div');
-    div.textContent = Array.prototype.slice.apply(arguments).map(function(arg) {
-        return (typeof arg === 'string') ? arg : JSON.stringify(arg);
-      }).join(' ');
-    el.appendChild(div);
-  }
-  display("Platform: ", device.platform);
-  display("Version: ", device.version);
-  display("Uuid: ", device.uuid);
-  display("Model: ", device.model);
-  display("Width: ", screen.width);
-  display("Height: ", screen.height);
-  display("Color-Depth: ", screen.colorDepth);
-  display("User-Agent: ", navigator.userAgent);
-}
-
-/******************************************************************************/
-
-function getPluginTestsJsModules() {
-  return cordova.require('cordova/plugin_list')
-    .map(function(jsmodule) {
-      return jsmodule.id;
-    })
-    .filter(function(id) {
-      return /.tests$/.test(id);
-    });
 }
 
 /******************************************************************************/
 
 function runAutoTests() {
   setTitle('Auto Tests');
-  createButton('Back', function() { setMode('main'); });
 
-  // Set up jasmine
-  var jasmine = jasmineRequire.core(jasmineRequire);
-  jasmineRequire.html(jasmine);
-  jasmineRequire.CouchDB(jasmine);
+  createActionButton('Again', setMode.bind(null, 'auto'));
+  createActionButton('Reset App', location.reload.bind(location));
+  createActionButton('Back', setMode.bind(null, 'main'));
+
+  var jasmineInterface = window.setUpJasmine();
+  // Attach jasmineInterface to global object
+  for (var property in jasmineInterface) {
+    window[property] = jasmineInterface[property];
+  }
+  window.defineAutoTests(jasmineInterface);
+
+  // Run the tests!
   var jasmineEnv = jasmine.getEnv();
-
-  jasmine.DEFAULT_TIMEOUT_INTERVAL = 300;
-
-  var catchingExceptions = getURLParameter("catch");
-  jasmineEnv.catchExceptions(typeof catchingExceptions === "undefined" ? true : catchingExceptions);
-
-  /*
-  var specFilter = new jasmine.HtmlSpecFilter({
-    filterString: function() { return getURLParameter("spec"); }
-  });
-
-  jasmineEnv.specFilter = function(spec) {
-    return specFilter.matches(spec.getFullName());
-  };
-  */
-
-  createHtmlReporter(jasmine);
-  createCouchdbReporter(jasmine, function() {
-    var test = cordova.require('org.apache.cordova.test-framework.test');
-    test.initForAutoTests(jasmine);
-
-    // Define our tests
-    getPluginTestsJsModules().forEach(function(id) {
-      var tests;
-      try {
-        tests = cordova.require(id);
-      } catch(ex) {
-        logger('Failed to load:', id);
-        return;
-      }
-      tests.init();
-      logger('Loaded:', id);
-    });
-
-    // Run!
-    test.runAutoTests();
-  });
-}
-
-function createHtmlReporter(jasmine) {
-   // Set up jasmine html reporter
-  var jasmineEnv = jasmine.getEnv();
-  var contentEl = document.getElementById('content');
-  var htmlReporter = new jasmine.HtmlReporter({
-    env: jasmineEnv,
-    queryString: getURLParameter,
-    onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
-    getContainer: function() { return contentEl; },
-    createElement: function() { return document.createElement.apply(document, arguments); },
-    createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-    timer: new jasmine.Timer()
-  });
-  htmlReporter.initialize();
-
-  jasmineEnv.addReporter(htmlReporter);
-}
-
-function createCouchdbReporter(jasmine, callback) {
-  var settings = cordova.require('org.apache.cordova.appsettings.appsettings');
-  var win = function(dbsettings) {
-    configureCouchReporter(dbsettings,jasmine,callback);
-  };
-  var fail = function() {
-    configureCouchReporter(null,jasmine,callback);
-  };
-  settings.get(win, fail, ["CouchdbUrl", "CouchdbPrivateUrl", "TestSha"]);
-}
-
-function configureCouchReporter(dbsettings, jasmine, callback) {
-    if (!dbsettings) {
-      console.warn('Not reporting results to CouchDB.');
-      return callback();
-    }
-
-    try {
-      var reporteroptions = {
-        serverip: dbsettings['CouchdbUrl'],
-        serverpublic: dbsettings['CouchdbPrivateUrl'],
-        sha: dbsettings['TestSha'],
-      };
-      var ciReporter = new jasmine.CouchDBReporter({
-        env: jasmine.getEnv(),
-        queryString: getURLParameter,
-        onRaiseExceptionsClick: function() { /*queryString.setParam("catch", !jasmineEnv.catchingExceptions());*/ },
-        getContainer: function() { return contentEl; },
-        createElement: function() { return document.createElement.apply(document, arguments); },
-        createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-        timer: new jasmine.Timer(),
-        couch: reporteroptions
-      });
-
-      jasmine.getEnv().addReporter(ciReporter);
-    } catch(ex) {
-      logger('Invalid CouchDB settings:', ex);
-    }
-
-    return callback();
+  jasmineEnv.execute();
 }
 
 /******************************************************************************/
 
 function runManualTests() {
   setTitle('Manual Tests');
-  createButton('Back', function() { setMode('main'); });
+
+  createActionButton('Reset App', location.reload.bind(location));
+  createActionButton('Back', setMode.bind(null, 'main'));
 
   var contentEl = document.getElementById('content');
-  var test = cordova.require('org.apache.cordova.test-framework.test');
-  test.initForManualTests();
+  var beforeEach = function() {
+    window.clearContent();
+    createActionButton('Reset App', location.reload.bind(location));
+    createActionButton('Back', setMode.bind(null, 'manual'));
+  }
+  window.defineManualTests(contentEl, beforeEach, createActionButton);
 }
 
 /******************************************************************************/
 
-function runUnknownMode() {
-  setTitle('Unknown Mode');
-  createButton('Reset', function() { setMode('main'); });
+function runMain() {
+  setTitle('Cordova Tests');
+
+  createActionButton('Auto Tests', setMode.bind(null, 'auto'));
+  createActionButton('Manual Tests', setMode.bind(null, 'manual'));
+  createActionButton('Reset App', location.reload.bind(location));
 }
 
 /******************************************************************************/
-
-document.addEventListener("DOMContentLoaded", function() {
-});
 
 document.addEventListener("deviceready", function() {
-  var contentEl = document.getElementById('content');
-  var test = cordova.require('org.apache.cordova.test-framework.test');
-  test.init(contentEl, createButton, logger);
-
-  var mode = getMode();
-  if (mode === 'main')
-    runMain();
-  else if (mode === 'autotests')
-    runAutoTests();
-  else if (mode === 'manualtests')
-    runManualTests();
-  else
-    runUnknownMode();
+  window.medic.load(function() {
+    if (window.medic.enabled) {
+      setMode('auto');
+    } else {
+      getMode(setMode);
+    }
+  });
 });
 
 /******************************************************************************/
