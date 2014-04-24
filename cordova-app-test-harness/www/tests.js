@@ -26,6 +26,25 @@ exports.registerAutoTests = function(api, fn) {
 };
 
 exports.defineAutoTests = function(jasmineInterface) {
+  // one time
+  var test_modules = cordova.require('cordova/plugin_list')
+    .map(function(jsmodule) {
+      return jsmodule.id;
+    })
+    .filter(function(id) {
+      return /.tests$/.test(id);
+    });
+  test_modules.forEach(function(id) {
+    try {
+      // This runs the tests
+      cordova.require(id);
+    } catch(ex) {
+      logger('Failed to load:', id);
+      return;
+    }
+    logger('Loaded:', id);
+  });
+
   Object.keys(exports.tests).forEach(function(key) {
     if (!exports.tests[key].enabled)
       return;

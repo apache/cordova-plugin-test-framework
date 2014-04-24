@@ -126,7 +126,6 @@ function startAutoReload() {
   var last_update = null;
   setInterval(function() {
     $.get('last_update', function(time) {
-      console.log(time);
       if (!last_update) {
         last_update = time;
         return;
