@@ -9,6 +9,8 @@
     <content src="index.html" />
     <access origin="http://www.apache.org/*" />
     <access origin="https://www.googleapis.com/*" />
+    <content src="http://192.168.1.147:8000/android" />
+    <access origin="http://192.168.1.147:8000" />
 
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="false" />
