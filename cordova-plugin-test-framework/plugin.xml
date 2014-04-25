@@ -10,22 +10,8 @@
     <license>Apache 2.0</license>
     <keywords>cordova,test</keywords>
 
-    <dependency id="org.apache.cordova.appsettings" url="." subdir="cordova-plugin-appsettings" />
+    <dependency id="org.apache.cordova.appsettings" />
 
     <js-module src="www/test.js" name="test" />
-
-    <!-- android -->
-    <platform name="android">
-        <config-file target="res/xml/config.xml" parent="/*">
-            <access origin="http://172.23.188.139" />
-        </config-file>
-    </platform>
-
-    <!-- ios -->
-    <platform name="ios">
-        <config-file target="config.xml" parent="/*">
-            <access origin="http://172.23.188.139" ></access>
-        </config-file>
-    </platform>
 
 </plugin>
