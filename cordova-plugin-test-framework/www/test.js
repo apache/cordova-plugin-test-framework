@@ -22,26 +22,11 @@
 exports.tests = Object.create(null);
 
 function getTestsObject(api) {
-  return window.tests[api] = window.tests[api] || { enabled: true };
+  return exports.tests[api] = exports.tests[api] || { enabled: true };
 }
 
-// Usage:
-// registerAutoTests('apiName', function() {
-//   define('foo', function() {
-//     .. jasmine tests ..
-//   });
-// });
-exports.registerAutoTests = function(api, fn) {
-  var apiTests = getTestsObject(api);
-  apiTests.defineAutoTests = function(jasmineInterface) {
-    jasmineInterface.describe(api + ' >>', function() {
-      fn(jasmineInterface); // Note: don't pass fn directly to jasmine.describe, since describe does async magic if fn takes an arg
-    });
-  };
-};
-
-exports.defineAutoTests = function(jasmineInterface) {
-  // one time
+exports.init = function() {
+  // This finds all js-modules named "tests" regadless of plugin it came from
   var test_modules = cordova.require('cordova/plugin_list')
     .map(function(jsmodule) {
       return jsmodule.id;
@@ -49,17 +34,30 @@ exports.defineAutoTests = function(jasmineInterface) {
     .filter(function(id) {
       return /.tests$/.test(id);
     });
+
+  // Map auto / manual test definitions for each, but without actually running the handlers
   test_modules.forEach(function(id) {
     try {
-      // This runs the tests
-      cordova.require(id);
+      var plugintests = cordova.require(id);
+
+      if (plugintests.hasOwnProperty('defineAutoTests')) {
+        getTestsObject(id).defineAutoTests = function(jasmineInterface) {
+          jasmineInterface.describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests));
+        };
+      }
+
+      if (plugintests.hasOwnProperty('defineManualTests')) {
+        getTestsObject(id).defineManualTests = plugintests.defineManualTests.bind(plugintests);
+      }
     } catch(ex) {
-      logger('Failed to load:', id);
+      console.warn('Failed to load tests: ', id);
       return;
     }
-    logger('Loaded:', id);
   });
+}
 
+exports.defineAutoTests = function(jasmineInterface) {
+  exports.init();
   Object.keys(exports.tests).forEach(function(key) {
     if (!exports.tests[key].enabled)
       return;
@@ -69,20 +67,8 @@ exports.defineAutoTests = function(jasmineInterface) {
   });
 };
 
-// Usage:
-// registerManualTests('apiName', function(contentEl, addButton) {
-//   .. setup ..
-//   addButton('Test Description', function() { ... });
-//   addButton('Test 2', function() { ... });
-// });
-exports.registerManualTests = function(api, fn) {
-  var apiTests = getTestsObject(api);
-  apiTests.defineManualTests = function(contentEl, addButton) {
-    fn(contentEl, addButton);
-  };
-}
-
 exports.defineManualTests = function(contentEl, beforeEach, createActionButton) {
+  exports.init();
   Object.keys(exports.tests).forEach(function(key) {
     if (!exports.tests[key].enabled)
       return;
