@@ -19,120 +19,78 @@
  *
 */
 
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-// Common
+exports.tests = Object.create(null);
 
-var contentEl,
-    createActionButtonFn,
-    logFn;
+function getTestsObject(api) {
+  return window.tests[api] = window.tests[api] || { enabled: true };
+}
 
-/******************************************************************************/
-
-exports.init = function(contentEl_, createActionButtonFn_, logFn_) {
-  contentEl = contentEl_;
-  createActionButtonFn = createActionButtonFn_;
-  logFn = logFn_;
+// Usage:
+// registerAutoTests('apiName', function() {
+//   define('foo', function() {
+//     .. jasmine tests ..
+//   });
+// });
+exports.registerAutoTests = function(api, fn) {
+  var apiTests = getTestsObject(api);
+  apiTests.defineAutoTests = function(jasmineInterface) {
+    jasmineInterface.describe(api + ' >>', function() {
+      fn(jasmineInterface); // Note: don't pass fn directly to jasmine.describe, since describe does async magic if fn takes an arg
+    });
+  };
 };
 
-/******************************************************************************/
-
-Object.defineProperty(exports, "log", {
-    get: function() { return logFn; }
-});
-
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-// Auto Tests
-
-(function() {
-
-var jasmine,
-    jasmineInterface;
-
-/******************************************************************************/
-
-exports.initForAutoTests = function(jasmine_) {
-  jasmine = jasmine_;
-  jasmineInterface = {};
-
-  var jasmineEnv = jasmine.getEnv();
-
-  // Fill in jasmineInterface
-  var jasmine_functions = ['describe',
-                           'xdescribe',
-                           'it',
-                           'xit',
-                           'beforeEach',
-                           'afterEach',
-                           'expect',
-                           'pending',
-                           'addMatchers',
-                           'spyOn'];
-  jasmine_functions.forEach(function(fn) {
-    jasmineInterface[fn] = jasmineEnv[fn].bind(jasmineEnv);
+exports.defineAutoTests = function(jasmineInterface) {
+  // one time
+  var test_modules = cordova.require('cordova/plugin_list')
+    .map(function(jsmodule) {
+      return jsmodule.id;
+    })
+    .filter(function(id) {
+      return /.tests$/.test(id);
+    });
+  test_modules.forEach(function(id) {
+    try {
+      // This runs the tests
+      cordova.require(id);
+    } catch(ex) {
+      logger('Failed to load:', id);
+      return;
+    }
+    logger('Loaded:', id);
   });
-  jasmineInterface.clock = jasmineEnv.clock;
-  jasmineInterface.jsApiReporter = new jasmine.JsApiReporter({ timer: new jasmine.Timer() });
-  jasmineInterface.jasmine = jasmine;
-  jasmineInterface.log = exports.log;
 
-  jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
-};
-
-/******************************************************************************/
-
-exports.runAutoTests = function() {
-  jasmine.getEnv().execute();
-};
-
-/******************************************************************************/
-
-exports.injectJasmineInterface = function(target, targetName) {
-  var ret = "";
-  for (var property in jasmineInterface) {
-    target[property] = jasmineInterface[property];
-    ret += 'var ' + property + ' = this[\'' + property + '\'];\n';
-  }
-  return ret;
-};
-
-/******************************************************************************/
-
-}());
-
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-// Manual Tests
-
-(function () {
-
-/******************************************************************************/
-
-exports.initForManualTests = function() {
-};
-
-/******************************************************************************/
-
-exports.addManualTestFn = function(title, fn) {
-  createActionButtonFn(title, fn);
-};
-
-/******************************************************************************/
-
-exports.addManualTestPage = function(title, url) {
-  createActionButtonFn(title, function() {
-    // TODO: This should probably have a way to get back.
-    // Perhaps open the page in a frame?
-    window.href = url;
+  Object.keys(exports.tests).forEach(function(key) {
+    if (!exports.tests[key].enabled)
+      return;
+    if (!exports.tests[key].hasOwnProperty('defineAutoTests'))
+      return;
+    exports.tests[key].defineAutoTests(jasmineInterface);
   });
 };
 
-/******************************************************************************/
+// Usage:
+// registerManualTests('apiName', function(contentEl, addButton) {
+//   .. setup ..
+//   addButton('Test Description', function() { ... });
+//   addButton('Test 2', function() { ... });
+// });
+exports.registerManualTests = function(api, fn) {
+  var apiTests = getTestsObject(api);
+  apiTests.defineManualTests = function(contentEl, addButton) {
+    fn(contentEl, addButton);
+  };
+}
 
-}());
-
-/******************************************************************************/
+exports.defineManualTests = function(contentEl, beforeEach, createActionButton) {
+  Object.keys(exports.tests).forEach(function(key) {
+    if (!exports.tests[key].enabled)
+      return;
+    if (!exports.tests[key].hasOwnProperty('defineManualTests'))
+      return;
+    createActionButton(key, function() {
+      beforeEach();
+      exports.tests[key].defineManualTests(contentEl, createActionButton);
+    });
+  });
+};

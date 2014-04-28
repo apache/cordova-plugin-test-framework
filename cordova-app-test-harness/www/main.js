@@ -86,7 +86,8 @@ function runAutoTests() {
   for (var property in jasmineInterface) {
     window[property] = jasmineInterface[property];
   }
-  window.defineAutoTests(jasmineInterface);
+  var cdvtest = cordova.require('org.apache.cordova.test-framework.test');
+  cdvtest.defineAutoTests(jasmineInterface);
 
   // Run the tests!
   var jasmineEnv = jasmine.getEnv();
@@ -107,7 +108,8 @@ function runManualTests() {
     createActionButton('Reset App', location.reload.bind(location));
     createActionButton('Back', setMode.bind(null, 'manual'));
   }
-  window.defineManualTests(contentEl, beforeEach, createActionButton);
+  var cdvtest = cordova.require('org.apache.cordova.test-framework.test');
+  cdvtest.defineManualTests(contentEl, beforeEach, createActionButton);
 }
 
 /******************************************************************************/
