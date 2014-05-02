@@ -21,14 +21,14 @@ function setMode(mode) {
   }
 
   localStorage.setItem('mode', mode);
-  window.clearContent();
+  clearContent();
 
   handlers[mode]();
 }
 
 /******************************************************************************/
 
-window.clearContent = function() {
+function clearContent() {
   var content = document.getElementById('content');
   content.innerHTML = '';
   var log = document.getElementById('log--content');
@@ -37,12 +37,20 @@ window.clearContent = function() {
   buttons.innerHTML = '';
 }
 
-window.setTitle = function(title) {
+function setTitle(title) {
   var el = document.getElementById('title');
   el.textContent = title;
 }
 
-window.createActionButton = function(title, callback) {
+function setLogVisibility(visible) {
+  if (visible) {
+    document.getElementById('log').classList.add('expanded');
+  } else {
+    document.getElementById('log').classList.remove('expanded');
+  }
+}
+
+function createActionButton(title, callback) {
   var buttons = document.getElementById('buttons');
   var div = document.createElement('div');
   var button = document.createElement('a');
@@ -57,7 +65,7 @@ window.createActionButton = function(title, callback) {
 }
 
 // TODO: make a better logger
-window.logger = function() {
+function logger() {
   console.log.apply(console, arguments);
   window.medic.log.apply(window.medic.log, arguments);
 
@@ -76,6 +84,7 @@ window.logger = function() {
 
 function runAutoTests() {
   setTitle('Auto Tests');
+  setLogVisibility(true);
 
   createActionButton('Again', setMode.bind(null, 'auto'));
   createActionButton('Reset App', location.reload.bind(location));
@@ -98,13 +107,14 @@ function runAutoTests() {
 
 function runManualTests() {
   setTitle('Manual Tests');
+  setLogVisibility(true);
 
   createActionButton('Reset App', location.reload.bind(location));
   createActionButton('Back', setMode.bind(null, 'main'));
 
   var contentEl = document.getElementById('content');
   var beforeEach = function() {
-    window.clearContent();
+    clearContent();
     createActionButton('Reset App', location.reload.bind(location));
     createActionButton('Back', setMode.bind(null, 'manual'));
   }
@@ -116,6 +126,7 @@ function runManualTests() {
 
 function runMain() {
   setTitle('Cordova Tests');
+  setLogVisibility(false);
 
   createActionButton('Auto Tests', setMode.bind(null, 'auto'));
   createActionButton('Manual Tests', setMode.bind(null, 'manual'));
@@ -143,7 +154,7 @@ function startAutoReload() {
 /******************************************************************************/
 
 document.addEventListener("deviceready", function() {
-  startAutoReload();
+  //startAutoReload();
   window.medic.load(function() {
     if (window.medic.enabled) {
       setMode('auto');
