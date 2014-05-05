@@ -16,6 +16,6 @@
     <js-module src="www/jasmine_helpers.js" name="jasmine_helpers" />
     <js-module src="www/main.js" name="main" />
 
-    <asset src="www/assets" target="assets" />
+    <asset src="www/assets" target="cdvtest" />
 
 </plugin>
