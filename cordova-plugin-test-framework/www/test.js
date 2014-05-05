@@ -19,6 +19,8 @@
  *
 */
 
+'use strict';
+
 exports.tests = Object.create(null);
 
 function getTestsObject(api) {
@@ -26,7 +28,14 @@ function getTestsObject(api) {
 }
 
 exports.init = function() {
-  // This finds all js-modules named "tests" regadless of plugin it came from
+  // Attach jasmineInterface to global object
+  var jasmine_helpers = require('./jasmine_helpers');
+  var jasmineInterface = jasmine_helpers.setUpJasmine();
+  for (var property in jasmineInterface) {
+    window[property] = jasmineInterface[property];
+  }
+
+  // This finds all js-modules named "tests" (regardless of plugins they came from)
   var test_modules = cordova.require('cordova/plugin_list')
     .map(function(jsmodule) {
       return jsmodule.id;
@@ -41,7 +50,7 @@ exports.init = function() {
       var plugintests = cordova.require(id);
 
       if (plugintests.hasOwnProperty('defineAutoTests')) {
-        getTestsObject(id).defineAutoTests = function(jasmineInterface) {
+        getTestsObject(id).defineAutoTests = function() {
           jasmineInterface.describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests));
         };
       }
@@ -56,19 +65,21 @@ exports.init = function() {
   });
 }
 
-exports.defineAutoTests = function(jasmineInterface) {
+exports.defineAutoTests = function() {
   exports.init();
+
   Object.keys(exports.tests).forEach(function(key) {
     if (!exports.tests[key].enabled)
       return;
     if (!exports.tests[key].hasOwnProperty('defineAutoTests'))
       return;
-    exports.tests[key].defineAutoTests(jasmineInterface);
+    exports.tests[key].defineAutoTests();
   });
 };
 
 exports.defineManualTests = function(contentEl, beforeEach, createActionButton) {
   exports.init();
+
   Object.keys(exports.tests).forEach(function(key) {
     if (!exports.tests[key].enabled)
       return;

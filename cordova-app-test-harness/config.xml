@@ -6,9 +6,10 @@
     </description>
     <author>
     </author>
-    <content src="index.html" />
     <access origin="http://www.apache.org/*" />
     <access origin="https://www.googleapis.com/*" />
+
+    <content src="assets/index.html" />
 
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="false" />

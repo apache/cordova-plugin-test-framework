@@ -1,6 +1,27 @@
-(function() {
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
 
 'use strict';
+
+// TODO: re-add medic
 
 /******************************************************************************/
 
@@ -67,7 +88,7 @@ function createActionButton(title, callback) {
 // TODO: make a better logger
 function logger() {
   console.log.apply(console, arguments);
-  window.medic.log.apply(window.medic.log, arguments);
+  //window.medic.log.apply(window.medic.log, arguments);
 
   var el = document.getElementById('log--content');
   var div = document.createElement('div');
@@ -90,16 +111,11 @@ function runAutoTests() {
   createActionButton('Reset App', location.reload.bind(location));
   createActionButton('Back', setMode.bind(null, 'main'));
 
-  var jasmineInterface = window.setUpJasmine();
-  // Attach jasmineInterface to global object
-  for (var property in jasmineInterface) {
-    window[property] = jasmineInterface[property];
-  }
   var cdvtest = cordova.require('org.apache.cordova.test-framework.test');
-  cdvtest.defineAutoTests(jasmineInterface);
+  cdvtest.defineAutoTests();
 
   // Run the tests!
-  var jasmineEnv = jasmine.getEnv();
+  var jasmineEnv = window.jasmine.getEnv();
   jasmineEnv.execute();
 }
 
@@ -135,35 +151,16 @@ function runMain() {
 
 /******************************************************************************/
 
-function startAutoReload() {
-  var last_update = null;
-  setInterval(function() {
-    $.get('last_update', function(time) {
-      if (!last_update) {
-        last_update = time;
-        return;
-      } else if (last_update === time) {
-        return;
-      } else {
-        location.reload();
-      }
-    });
-  }, 250);
-}
-
-/******************************************************************************/
-
-document.addEventListener("deviceready", function() {
-  //startAutoReload();
+exports.init = function() {
+  /*
   window.medic.load(function() {
     if (window.medic.enabled) {
       setMode('auto');
     } else {
-      getMode(setMode);
     }
   });
-});
+  */
+  getMode(setMode);
+};
 
 /******************************************************************************/
-
-}());

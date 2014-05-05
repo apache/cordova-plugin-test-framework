@@ -10,8 +10,12 @@
     <license>Apache 2.0</license>
     <keywords>cordova,test</keywords>
 
-    <dependency id="org.apache.cordova.appsettings" />
+    <!-- <dependency id="org.apache.cordova.appsettings" /> -->
 
     <js-module src="www/test.js" name="test" />
+    <js-module src="www/jasmine_helpers.js" name="jasmine_helpers" />
+    <js-module src="www/main.js" name="main" />
+
+    <asset src="www/assets" target="assets" />
 
 </plugin>

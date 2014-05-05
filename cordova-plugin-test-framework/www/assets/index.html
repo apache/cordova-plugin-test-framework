@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Cordova tests</title>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+
+    <link rel="stylesheet" type="text/css" href="topcoat-0.7.5/css/topcoat-mobile-light.min.css">
+    <link rel="stylesheet" type="text/css" href="jasmine-2.0.0/jasmine.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="main.css" media="screen">
+
+    <script type="text/javascript" src="jasmine-2.0.0/jasmine.js"></script>
+    <script type="text/javascript" src="jasmine-2.0.0/jasmine-html.js"></script>
+
+    <script type="text/javascript" src="../cordova.js"></script>
+
+    <!-- App scripts -->
+  </head>
+
+  <body>
+    <div id='title'></div>
+    <div id='middle'>
+      <div id='buttons'></div>
+      <div id='content'></div>
+    </div>
+    <div id='log'>
+      <div id='log--title'>Log</div>
+      <div id='log--content'></div>
+    </div>
+    <script>
+      document.addEventListener("deviceready", function() {
+        cordova.require('org.apache.cordova.test-framework.main').init();
+      });
+    </script>
+  </body>
+</html>
