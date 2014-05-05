@@ -9,7 +9,7 @@
     <access origin="http://www.apache.org/*" />
     <access origin="https://www.googleapis.com/*" />
 
-    <content src="assets/index.html" />
+    <content src="cdvtest/index.html" />
 
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="false" />

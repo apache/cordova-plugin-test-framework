@@ -26,8 +26,7 @@
 /******************************************************************************/
 
 function getMode(callback) {
-  var mode = localStorage.getItem('mode') || 'main';
-  console.log(mode);
+  var mode = localStorage.getItem('cdvtest-mode') || 'main';
   callback(mode);
 }
 
@@ -38,10 +37,12 @@ function setMode(mode) {
     'manual': runManualTests
   }
   if (!handlers.hasOwnProperty(mode)) {
-    return console.error("Unsopported mode: " + mode);
+    console.error("Unsupported mode: " + mode);
+    console.error("Defaulting to 'main'");
+    mode = 'main';
   }
 
-  localStorage.setItem('mode', mode);
+  localStorage.setItem('cdvtest-mode', mode);
   clearContent();
 
   handlers[mode]();
