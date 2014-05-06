@@ -27,6 +27,7 @@ html, body {
   position: absolute;
   top: 30px;
   bottom: 20px;
+  padding-bottom: 40%;
   width: 100%;
   overflow-y: auto;
   overflow-x: auto;
@@ -43,7 +44,7 @@ html, body {
 }
 
 #log.expanded {
-  height: 30%;
+  height: 40%;
 }
 
 #log--title {
@@ -64,7 +65,19 @@ html, body {
   background-color: white;
 }
 
-#log--content--line {
+.log--content--line {
   border-bottom: 1px solid #ccc;
   white-space: pre;
+}
+
+.log--content--line--log {
+  background-color: white;
+}
+
+.log--content--line--warn {
+  background-color: #FCFFA6;
+}
+
+.log--content--line--error {
+  background-color: #FFA6A6;
 }

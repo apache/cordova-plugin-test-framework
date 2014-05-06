@@ -57,12 +57,18 @@ function clearContent() {
   log.innerHTML = '';
   var buttons = document.getElementById('buttons');
   buttons.innerHTML = '';
+
+  setLogVisibility(false);
 }
+
+/******************************************************************************/
 
 function setTitle(title) {
   var el = document.getElementById('title');
   el.textContent = title;
 }
+
+/******************************************************************************/
 
 function setLogVisibility(visible) {
   if (visible) {
@@ -71,6 +77,57 @@ function setLogVisibility(visible) {
     document.getElementById('log').classList.remove('expanded');
   }
 }
+
+function toggleLogVisibility() {
+  var log = document.getElementById('log');
+  if (log.classList.contains('expanded')) {
+    log.classList.remove('expanded');
+  } else {
+    log.classList.add('expanded');
+  }
+}
+
+/******************************************************************************/
+
+function attachEvents() {
+  document.getElementById('log--title').addEventListener('click', toggleLogVisibility);
+}
+
+/******************************************************************************/
+
+function wrapConsole() {
+  var origConsole = window.console;
+
+  function appendToOnscreenLog(type, args) {
+    var el = document.getElementById('log--content');
+    var div = document.createElement('div');
+    div.classList.add('log--content--line');
+    div.classList.add('log--content--line--' + type);
+    div.textContent = Array.prototype.slice.apply(args).map(function(arg) {
+        return (typeof arg === 'string') ? arg : JSON.stringify(arg);
+      }).join(' ');
+    el.appendChild(div);
+    // scroll to bottom
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function createCustomLogger(type) {
+    return function() {
+      origConsole[type].apply(origConsole, arguments);
+      //window.medic.log.apply(window.medic.log, arguments);
+      appendToOnscreenLog(type, arguments);
+      setLogVisibility(true);
+    }
+  }
+
+  window.console = {
+    log: createCustomLogger('log'),
+    warn: createCustomLogger('warn'),
+    error: createCustomLogger('error'),
+  }
+}
+
+/******************************************************************************/
 
 function createActionButton(title, callback) {
   var buttons = document.getElementById('buttons');
@@ -86,27 +143,12 @@ function createActionButton(title, callback) {
   buttons.appendChild(div);
 }
 
-// TODO: make a better logger
-function logger() {
-  console.log.apply(console, arguments);
-  //window.medic.log.apply(window.medic.log, arguments);
-
-  var el = document.getElementById('log--content');
-  var div = document.createElement('div');
-  div.classList.add('log--content--line');
-  div.textContent = Array.prototype.slice.apply(arguments).map(function(arg) {
-      return (typeof arg === 'string') ? arg : JSON.stringify(arg);
-    }).join(' ');
-  el.appendChild(div);
-  // scroll to bottom
-  el.scrollTop = el.scrollHeight;
-}
-
+/******************************************************************************/
+/******************************************************************************/
 /******************************************************************************/
 
 function runAutoTests() {
   setTitle('Auto Tests');
-  setLogVisibility(true);
 
   createActionButton('Again', setMode.bind(null, 'auto'));
   createActionButton('Reset App', location.reload.bind(location));
@@ -124,7 +166,6 @@ function runAutoTests() {
 
 function runManualTests() {
   setTitle('Manual Tests');
-  setLogVisibility(true);
 
   createActionButton('Reset App', location.reload.bind(location));
   createActionButton('Back', setMode.bind(null, 'main'));
@@ -143,7 +184,6 @@ function runManualTests() {
 
 function runMain() {
   setTitle('Cordova Tests');
-  setLogVisibility(false);
 
   createActionButton('Auto Tests', setMode.bind(null, 'auto'));
   createActionButton('Manual Tests', setMode.bind(null, 'manual'));
@@ -161,6 +201,11 @@ exports.init = function() {
     }
   });
   */
+  // TODO: have a way to opt-out of console wrapping in case line numbers are important.
+  // ...Or find a custom way to print line numbers using stack or something.
+  attachEvents();
+  wrapConsole();
+
   getMode(setMode);
 };
 
