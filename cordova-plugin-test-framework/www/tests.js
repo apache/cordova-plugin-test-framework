@@ -44,7 +44,7 @@ function requireAllTestModules() {
 
       if (plugintests.hasOwnProperty('defineAutoTests')) {
         getTestsObject(id).defineAutoTests = function() {
-          jasmineInterface.describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests));
+          describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests));
         };
       }
 
