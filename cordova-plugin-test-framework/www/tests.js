@@ -34,7 +34,7 @@ function requireAllTestModules() {
       return jsmodule.id;
     })
     .filter(function(id) {
-      return /.tests$/.test(id);
+      return /\.tests$/.test(id);
     });
 
   // Map auto / manual test definitions for each, but without actually running the handlers
