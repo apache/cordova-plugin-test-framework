@@ -26,7 +26,7 @@
 /******************************************************************************/
 
 function getMode(callback) {
-  var mode = localStorage.getItem('cdvtest-mode') || 'main';
+  var mode = localStorage.getItem('cdvtests-mode') || 'main';
   callback(mode);
 }
 
@@ -42,7 +42,7 @@ function setMode(mode) {
     mode = 'main';
   }
 
-  localStorage.setItem('cdvtest-mode', mode);
+  localStorage.setItem('cdvtests-mode', mode);
   clearContent();
 
   handlers[mode]();
@@ -112,8 +112,8 @@ function runAutoTests() {
   createActionButton('Reset App', location.reload.bind(location));
   createActionButton('Back', setMode.bind(null, 'main'));
 
-  var cdvtest = cordova.require('org.apache.cordova.test-framework.test');
-  cdvtest.defineAutoTests();
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
+  cdvtests.defineAutoTests();
 
   // Run the tests!
   var jasmineEnv = window.jasmine.getEnv();
@@ -135,8 +135,8 @@ function runManualTests() {
     createActionButton('Reset App', location.reload.bind(location));
     createActionButton('Back', setMode.bind(null, 'manual'));
   }
-  var cdvtest = cordova.require('org.apache.cordova.test-framework.test');
-  cdvtest.defineManualTests(contentEl, beforeEach, createActionButton);
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
+  cdvtests.defineManualTests(contentEl, beforeEach, createActionButton);
 }
 
 /******************************************************************************/
