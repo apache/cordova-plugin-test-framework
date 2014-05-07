@@ -171,8 +171,9 @@ function runManualTests() {
   createActionButton('Back', setMode.bind(null, 'main'));
 
   var contentEl = document.getElementById('content');
-  var beforeEach = function() {
+  var beforeEach = function(title) {
     clearContent();
+    setTitle(title || 'Manual Tests');
     createActionButton('Reset App', location.reload.bind(location));
     createActionButton('Back', setMode.bind(null, 'manual'));
   }

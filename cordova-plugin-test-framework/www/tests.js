@@ -101,7 +101,7 @@ exports.defineManualTests = function(contentEl, beforeEach, createActionButton) 
     if (!exports.tests[key].hasOwnProperty('defineManualTests'))
       return;
     createActionButton(key, function() {
-      beforeEach();
+      beforeEach(key);
       exports.tests[key].defineManualTests(contentEl, createActionButton);
     });
   });
