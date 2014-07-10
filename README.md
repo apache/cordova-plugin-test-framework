@@ -1,6 +1,6 @@
 # Cordova Plugin Test Framework
 
-The `org.apache.cordova.test-harness` plugin does two things:
+The `org.apache.cordova.test-framework` plugin does two things:
 
 1. [Defines the interface for cordova plugins to write tests](#interface)
 2. [Provides a test harness for actually running those tests](#harness)
@@ -16,13 +16,7 @@ Tests run directly inside existing cordova projects, so you can rapidly switch b
         cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git#cdvtest
         cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation.git#cdvtest
 
-3. To run plugin tests, install this plugin.
-
-        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-labs.git#cdvtest:cordova-plugin-test-framework
-
-4. Change the start page in `config.xml` with `<content src="cdvtests/index.html" />`.
-5. Thats it!  Now just `cordova run` and explore.
-6. Switch back to application development in-place by removing that line from `config.xml`.
+3. Follow the docs for [Setting up the test harness](#harness).
 
 
 <a name="interface" />
@@ -37,7 +31,7 @@ Add a `<js-module>` named `tests` to your `plugin.xml`.  E.g. `org.apache.cordov
 </js-module>
 ```
 
-The `org.apache.cordova.test-harness` plugin will automatically find all `tests` modules across all plugins.
+The `org.apache.cordova.test-framework` plugin will automatically find all `tests` modules across all plugins.
 
 ### Defining Auto Tests
 
@@ -104,20 +98,19 @@ See: [`org.apache.cordova.device`'s tests](https://github.com/apache/cordova-plu
 1. Use your existing cordova app, or create a new one.
 2. Add this plugin:
 
-        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-labs.git#cdvtest:cordova-plugin-test-framework
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-test-framework.git
 
-3. Change the start page in `config.xml` with `<content src="cdvtests/index.html" />`.
-4. Thats it!  Now just `cordova run` and explore.
-5. Switch back to application development in-place by removing that line from `config.xml`.
+3. Change the start page in `config.xml` with `<content src="cdvtests/index.html" />` or navigate to `cdvtests/index.html` from within your app.
+4. Thats it!
 
 
 ## FAQ
 
-* Q: Should I add `org.apache.cordova.test-harness` as a `<dependancy>` of my plugin?
-  * A: No.  The end-user should decide if they want to install the test harness, not your plugin (most users won't).
+* Q: Should I add `org.apache.cordova.test-framework` as a `<dependancy>` of my plugin?
+  * A: No.  The end-user should decide if they want to install the test framework, not your plugin (most users won't).
 
 * Q: What do I do if my plugin tests must have very large assets?
   * A: Don't bundle those assets with your plugin.  If you can, have your tests fail gracefully if those assets don't don't exist (perhaps log a warning, perhaps fail a single asset-checking test, and skip the rest).  Then, ideally download those assets automatically into local storage the first time tests run.  Or create a manual test step to download and install assets.  As a final alternative, split those test assets into a separate plugin, and instruct users to install that plugin to run your full test suite.
 
-* Q: Should I ship my app with the test harness plugin installed?
+* Q: Should I ship my app with the test framework plugin installed?
   * A: Not likely.  If you want, you can.  Then your app could even embed a link to the test page (`cdvtests/index.html`) from a help section of your app, to give end users a way to run your test suite out in the feild.  That may help diagnose causes of issues within your app.  Maybe.
