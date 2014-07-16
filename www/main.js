@@ -129,8 +129,9 @@ function wrapConsole() {
 
 /******************************************************************************/
 
-function createActionButton(title, callback) {
-  var buttons = document.getElementById('buttons');
+function createActionButton(title, callback, appendTo) {
+  appendTo = appendTo ? appendTo : 'buttons';
+  var buttons = document.getElementById(appendTo);
   var div = document.createElement('div');
   var button = document.createElement('a');
   button.textContent = title;
