@@ -18,7 +18,7 @@ html, body {
   z-index: 1000;
 
   background-color: #75B2F0;
-  font-size: 25px;
+  font-size: 20px;
   text-align: center;
   font-weight: bold;
 }
@@ -44,7 +44,7 @@ html, body {
 }
 
 #log.expanded {
-  height: 40%;
+  height: 20%;
 }
 
 #log--title {
@@ -81,7 +81,6 @@ html, body {
 .log--content--line--error {
   background-color: #FFA6A6;
 }
-
 #info{
   background:#ffa;
   border: 1px solid #ffd324;
