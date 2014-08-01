@@ -14,6 +14,7 @@
 
     <js-module src="www/tests.js" name="cdvtests" />
     <js-module src="www/jasmine_helpers.js" name="jasmine_helpers" />
+    <js-module src="www/medic.js" name="medic" />
     <js-module src="www/main.js" name="main" />
 
     <asset src="www/assets" target="cdvtests" />

@@ -80,15 +80,14 @@ function addJasmineReporters(jasmineInterface, jasmineEnv) {
   jasmineInterface.htmlReporter.initialize();
   jasmineEnv.addReporter(jasmineInterface.htmlReporter);
 
-  /*
-  if (window.medic.enabled) {
+  var medic = require('org.apache.cordova.test-framework.medic');
+  if (medic.enabled) {
     jasmineRequire.medic(jasmineInterface.jasmine);
     jasmineInterface.MedicReporter = new jasmineInterface.jasmine.MedicReporter({
       env: jasmineEnv,
-      log: { logurl: window.medic.logurl }
+      log: { logurl: medic.logurl }
     });
     jasmineInterface.MedicReporter.initialize();
     jasmineEnv.addReporter(jasmineInterface.MedicReporter);
   }
-  */
 }

@@ -21,8 +21,6 @@
 
 'use strict';
 
-// TODO: re-add medic
-
 /******************************************************************************/
 
 function getMode(callback) {
@@ -112,9 +110,11 @@ function wrapConsole() {
   }
 
   function createCustomLogger(type) {
+    var medic = require('org.apache.cordova.test-framework.medic');
     return function() {
       origConsole[type].apply(origConsole, arguments);
-      //window.medic.log.apply(window.medic.log, arguments);
+      // TODO: encode log type somehow for medic logs?
+      medic.log.apply(medic, arguments);
       appendToOnscreenLog(type, arguments);
       setLogVisibility(true);
     }
@@ -200,20 +200,20 @@ function runMain() {
 /******************************************************************************/
 
 exports.init = function() {
-  /*
-  window.medic.load(function() {
-    if (window.medic.enabled) {
-      setMode('auto');
-    } else {
-    }
-  });
-  */
   // TODO: have a way to opt-out of console wrapping in case line numbers are important.
   // ...Or find a custom way to print line numbers using stack or something.
+  // make sure to always wrap when using medic.
   attachEvents();
   wrapConsole();
 
-  getMode(setMode);
+  var medic = require('org.apache.cordova.test-framework.medic');
+  medic.load(function() {
+    if (medic.enabled) {
+      setMode('auto');
+    } else {
+      getMode(setMode);
+    }
+  });
 };
 
 /******************************************************************************/
