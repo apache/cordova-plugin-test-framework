@@ -194,7 +194,7 @@ function runMain() {
   createActionButton('Auto Tests', setMode.bind(null, 'auto'));
   createActionButton('Manual Tests', setMode.bind(null, 'manual'));
   createActionButton('Reset App', location.reload.bind(location));
-  if (/showBack/.exec(location.search)) {
+  if (/showBack/.exec(location.hash)) {
       createActionButton('Back', function() {
           history.go(-1);
       });
