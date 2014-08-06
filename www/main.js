@@ -93,9 +93,9 @@ function attachEvents() {
 
 /******************************************************************************/
 
-function wrapConsole() {
-  var origConsole = window.console;
+var origConsole = window.console;
 
+exports.wrapConsole = function() {
   function appendToOnscreenLog(type, args) {
     var el = document.getElementById('log--content');
     var div = document.createElement('div');
@@ -125,7 +125,11 @@ function wrapConsole() {
     warn: createCustomLogger('warn'),
     error: createCustomLogger('error'),
   }
-}
+};
+
+exports.unwrapConsole = function() {
+  window.console = origConsole;
+};
 
 /******************************************************************************/
 
@@ -204,7 +208,7 @@ exports.init = function() {
   // ...Or find a custom way to print line numbers using stack or something.
   // make sure to always wrap when using medic.
   attachEvents();
-  wrapConsole();
+  exports.wrapConsole();
 
   var medic = require('org.apache.cordova.test-framework.medic');
   medic.load(function() {
