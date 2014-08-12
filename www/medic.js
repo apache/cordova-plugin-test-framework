@@ -49,5 +49,15 @@ exports.load = function (callback) {
   xhr.onerror = function() {
    callback();
   }
-  xhr.send();
+
+  try {
+    xhr.send(null);
+  }
+  catch(ex) {
+    // some platforms throw on a file not found
+    console.log('Did not find medic config file');
+    setTimeout(function(){
+        callback();
+    },0);
+  }
 }
