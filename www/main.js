@@ -189,7 +189,7 @@ function runManualTests() {
 /******************************************************************************/
 
 function runMain() {
-  setTitle('Cordova Tests');
+  setTitle('Apache Cordova Plugin Tests');
 
   createActionButton('Auto Tests', setMode.bind(null, 'auto'));
   createActionButton('Manual Tests', setMode.bind(null, 'manual'));
