@@ -23,8 +23,28 @@
 
 exports.tests = Object.create(null);
 
+function TestModule(api) {
+  var name = api;
+  var enabled = true;
+
+  var enabledPref = localStorage.getItem('cordova-tests-enabled-' + name);
+  if (enabledPref)
+  {
+    enabled = (enabledPref == true.toString());
+  }
+  
+  this.getEnabled = function () {
+    return enabled;
+  };
+  
+  this.setEnabled = function (isEnabled) {
+    enabled = isEnabled;
+    localStorage.setItem('cordova-tests-enabled-' + name, enabled);
+  };
+}
+
 function getTestsObject(api) {
-  return exports.tests[api] = exports.tests[api] || { enabled: true };
+  return exports.tests[api] = exports.tests[api] || new TestModule(api);
 }
 
 function requireAllTestModules() {
@@ -83,7 +103,7 @@ exports.defineAutoTests = function() {
   attachJasmineInterfaceToGlobal();
 
   Object.keys(exports.tests).forEach(function(key) {
-    if (!exports.tests[key].enabled)
+    if (!exports.tests[key].getEnabled())
       return;
     if (!exports.tests[key].hasOwnProperty('defineAutoTests'))
       return;
@@ -96,7 +116,7 @@ exports.defineManualTests = function(contentEl, beforeEach, createActionButton) 
   detachJasmineInterfaceFromGlobal();
 
   Object.keys(exports.tests).forEach(function(key) {
-    if (!exports.tests[key].enabled)
+    if (!exports.tests[key].getEnabled())
       return;
     if (!exports.tests[key].hasOwnProperty('defineManualTests'))
       return;
@@ -106,3 +126,7 @@ exports.defineManualTests = function(contentEl, beforeEach, createActionButton) 
     });
   });
 };
+
+exports.init = function() {
+  requireAllTestModules();
+}
