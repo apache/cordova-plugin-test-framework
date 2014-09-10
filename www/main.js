@@ -21,6 +21,8 @@
 
 'use strict';
 
+var autoFirstTime = true;
+
 /******************************************************************************/
 
 function getMode(callback) {
@@ -33,7 +35,7 @@ function setMode(mode) {
     'main': runMain,
     'auto': runAutoTests,
     'manual': runManualTests
-  }
+  };
   if (!handlers.hasOwnProperty(mode)) {
     console.error("Unsupported mode: " + mode);
     console.error("Defaulting to 'main'");
@@ -117,14 +119,14 @@ exports.wrapConsole = function() {
       medic.log.apply(medic, arguments);
       appendToOnscreenLog(type, arguments);
       setLogVisibility(true);
-    }
+    };
   }
 
   window.console = {
     log: createCustomLogger('log'),
     warn: createCustomLogger('warn'),
     error: createCustomLogger('error'),
-  }
+  };
 };
 
 exports.unwrapConsole = function() {
@@ -149,21 +151,177 @@ function createActionButton(title, callback, appendTo) {
 }
 
 /******************************************************************************/
+
+function setupAutoTestsEnablers(cdvtests) {
+  
+  var enablerList = createEnablerList();
+
+  // Iterate over all the registered test modules
+  Object.keys(cdvtests.tests).forEach(function(api) {
+    var testModule = cdvtests.tests[api];
+    
+    if (!testModule.hasOwnProperty('defineAutoTests'))
+      return;
+    
+    // For "standard" plugins remove the common/repetitive bits of
+    // the api key, for use as the title.  For third-party plugins, the full
+    // api will be used as the title
+    var title = api.replace(/org\.apache\.cordova\./i, '').replace(/\.tests.tests/i, '');
+
+    createEnablerCheckbox(api, title, testModule.getEnabled(), enablerList.id, toggleTestHandler);
+  });
+}
+
 /******************************************************************************/
+
+function createEnablerList() {
+  var buttons = document.getElementById('buttons');
+
+  var enablerContainer = document.createElement('div');
+  enablerContainer.id = 'test-enablers-container';
+  
+  var expander = document.createElement('span');
+  expander.id = 'test-expander';
+  expander.innerText = 'Show/hide tests to be run';
+  expander.onclick = toggleEnablerVisibility;
+
+  var enablerList = document.createElement('div');
+  enablerList.id = "test-list";
+  
+  var checkButtonBar = document.createElement('ul');
+  checkButtonBar.classList.add('topcoat-button-bar');
+  
+  for (var i = 0; i < 2; i++)
+  {
+    var barItem = document.createElement('li');
+    barItem.classList.add('topcoat-button-bar__item');
+    
+    var link = document.createElement('a');
+    var selected = (i === 0);
+    link.classList.add('topcoat-button-bar__button');
+    link.innerText = selected ? 'Check all' : 'Uncheck all';
+    link.href = null;
+    link.onclick = (function(select) {
+      return function(e) {
+        e.preventDefault();
+        toggleSelected(enablerList.id, select);
+        return false;
+      };
+    })(selected);
+
+    barItem.appendChild(link);
+    checkButtonBar.appendChild(barItem);
+  }
+
+  enablerList.appendChild(checkButtonBar);
+  
+  enablerContainer.appendChild(expander);
+  enablerContainer.appendChild(enablerList);
+  
+  buttons.appendChild(enablerContainer);
+  
+  return enablerList;
+}
+
+/******************************************************************************/
+
+function toggleSelected(containerId, newCheckedValue) {
+  var container = document.getElementById(containerId);
+  
+  var cbs = container.getElementsByTagName('input');
+  
+  for (var i = 0; i < cbs.length; i++) {
+    if(cbs[i].type === 'checkbox') {
+      cbs[i].checked = newCheckedValue;
+      toggleTestEnabled(cbs[i]);
+    }
+  }    
+}
+
+/******************************************************************************/
+
+function toggleEnablerVisibility() {
+  var enablerList = document.getElementById('test-list');
+  if (enablerList.classList.contains('expanded')) {
+    enablerList.classList.remove('expanded');
+  } else {
+    enablerList.classList.add('expanded');
+  }
+}
+
+/******************************************************************************/
+
+function createEnablerCheckbox(api, title, isEnabled, appendTo, callback) {
+  var container = document.getElementById(appendTo);
+
+  var label = document.createElement('label');
+  label.classList.add('topcoat-checkbox');
+  
+  var checkbox = document.createElement('input');
+  checkbox.type = "checkbox";
+  checkbox.value = api;
+  checkbox.checked = isEnabled;
+  label.htmlFor = checkbox.id = 'enable_' + api;
+
+  checkbox.onchange = function(e) {
+    e.preventDefault();
+    callback(e);
+  };
+
+  var div = document.createElement('div');
+  div.classList.add('topcoat-checkbox__checkmark');
+  
+  var text = document.createElement('span');
+  text.innerText = title;
+  
+  label.appendChild(checkbox);
+  label.appendChild(div);
+  label.appendChild(text);
+
+  container.appendChild(label);
+}
+
+/******************************************************************************/
+
+function toggleTestHandler(event) {
+  var checkbox = event.target;
+  
+  toggleTestEnabled(checkbox);
+}
+
+/******************************************************************************/
+
+function toggleTestEnabled(checkbox) {
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
+  cdvtests.tests[checkbox.value].setEnabled(checkbox.checked);
+}
+
 /******************************************************************************/
 
 function runAutoTests() {
   setTitle('Auto Tests');
 
-  createActionButton('Again', setMode.bind(null, 'auto'));
+  createActionButton('Run', setMode.bind(null, 'auto'));
   createActionButton('Reset App', location.reload.bind(location));
   createActionButton('Back', setMode.bind(null, 'main'));
 
   var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
+  cdvtests.init();
+  setupAutoTestsEnablers(cdvtests);
+  
   cdvtests.defineAutoTests();
 
   // Run the tests!
   var jasmineEnv = window.jasmine.getEnv();
+  
+  if (autoFirstTime) {
+    autoFirstTime = false;
+    // Uncomment to skip running of tests on initial load
+    //  - If you're testing a specific plugin, you probably want to uncomment,
+    //    so you don't have to wait for all the tests to run every time
+    //return;
+  }
+  
   jasmineEnv.execute();
 }
 
@@ -181,7 +339,7 @@ function runManualTests() {
     setTitle(title || 'Manual Tests');
     createActionButton('Reset App', location.reload.bind(location));
     createActionButton('Back', setMode.bind(null, 'manual'));
-  }
+  };
   var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   cdvtests.defineManualTests(contentEl, beforeEach, createActionButton);
 }

@@ -100,3 +100,24 @@ html, body {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+#test-enablers-container {
+  margin: 10px 0px;
+}
+
+#test-expander {
+  margin: 5px;
+  text-decoration: underline;
+}
+
+#test-list {
+  display: none;
+}
+
+#test-list.expanded {
+  display: inherit;
+}
+
+#test-list label {
+  display: block;
+}
