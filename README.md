@@ -10,11 +10,16 @@ Tests run directly inside existing cordova projects, so you can rapidly switch b
 # TLDR; Try it
 
 1. Use your existing cordova app, or create a new one.
-2. To make this interesting, add some plugins which actually bundle tests.  Here are a few examples:
+2. Plugins bundle their tests using a nested plugin in a `/tests` directory. To make this interesting, add some of these plugins and their respective tests.  Here are a few examples:
 
-        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git#cdvtest
-        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git#cdvtest
-        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation.git#cdvtest
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git#:/tests
+		
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git#:/tests
+		
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation.git
+        cordova plugin add http://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation#:/tests
 
 3. Follow the docs for [Setting up the test harness](#harness).
 
@@ -24,14 +29,16 @@ Tests run directly inside existing cordova projects, so you can rapidly switch b
 
 ### Where do tests live?
 
-Add a `<js-module>` named `tests` to your `plugin.xml`.  E.g. `org.apache.cordova.device` plugin has this in its [`plugin.xml`](https://github.com/apache/cordova-plugin-device/blob/cdvtest/plugin.xml):
+Add a directory named `tests` to the root of your plugin. Within this directory, create a nested `plugin.xml` for the tests plugin. It should have a plugin id with the form `plugin-id.tests` (e.g. the `org.apache.cordova.device` plugin has the nested id `org.apache.cordova.device.tests`) and should contain a `<js-module>` named `tests`. E.g:
 
 ```
-<js-module src="test/tests.js" name="tests">
+<js-module src="tests/tests.js" name="tests">
 </js-module>
 ```
 
-The `org.apache.cordova.test-framework` plugin will automatically find all `tests` modules across all plugins.
+For example, the `org.apache.cordova.device` plugin has this nested [`plugin.xml`](https://github.com/apache/cordova-plugin-device/blob/master/tests/plugin.xml).
+
+The `org.apache.cordova.test-framework` plugin will automatically find all `tests` modules across all plugins for which the nested tests plugin is installed.
 
 ### Defining Auto Tests
 
@@ -67,7 +74,7 @@ Note: Your tests will automatically be labeled with your plugin id, so do not pr
 
 ### Defining Manual Tests
 
-Simply export a function named `defineManualTests`, which (gasp!) defines your manual-tests when run.  Manual tests do *not* use jasmine-2.0, and success/failure results are not officially reported in any standard way.  Instead, create buttons to run arbitraty javascript when clicked, and display output to user using `console` or by manipulating a provided DOM element. E.g.:
+Simply export a function named `defineManualTests`, which (gasp!) defines your manual-tests when run.  Manual tests do *not* use jasmine-2.0, and success/failure results are not officially reported in any standard way.  Instead, create buttons to run arbitrary javascript when clicked, and display output to user using `console` or by manipulating a provided DOM element. E.g.:
 
 ```
 exports.defineManualTests = function(contentEl, createActionButton) {
@@ -89,8 +96,7 @@ Note: Your tests will automatically be labeled with your plugin id, so do not pr
 <a name="example">
 ### Example
 
-See: [`org.apache.cordova.device`'s tests](https://github.com/apache/cordova-plugin-device/blob/cdvtest/test/tests.js).
-
+See: [`org.apache.cordova.device` tests](https://github.com/apache/cordova-plugin-device/blob/master/tests/tests.js).
 
 <a name="harness" />
 ## Running Plugin Tests
@@ -106,7 +112,7 @@ See: [`org.apache.cordova.device`'s tests](https://github.com/apache/cordova-plu
 
 ## FAQ
 
-* Q: Should I add `org.apache.cordova.test-framework` as a `<dependancy>` of my plugin?
+* Q: Should I add `org.apache.cordova.test-framework` as a `<dependency>` of my plugin?
   * A: No.  The end-user should decide if they want to install the test framework, not your plugin (most users won't).
 
 * Q: What do I do if my plugin tests must have very large assets?
