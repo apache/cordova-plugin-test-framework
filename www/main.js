@@ -157,19 +157,22 @@ function setupAutoTestsEnablers(cdvtests) {
   var enablerList = createEnablerList();
 
   // Iterate over all the registered test modules
-  Object.keys(cdvtests.tests).forEach(function(api) {
-    var testModule = cdvtests.tests[api];
-    
-    if (!testModule.hasOwnProperty('defineAutoTests'))
-      return;
-    
+  var enabled = 0;
+  var total = iterateAutoTests(cdvtests, function(api, testModule) {
     // For "standard" plugins remove the common/repetitive bits of
     // the api key, for use as the title.  For third-party plugins, the full
     // api will be used as the title
     var title = api.replace(/org\.apache\.cordova\./i, '').replace(/\.tests.tests/i, '');
 
     createEnablerCheckbox(api, title, testModule.getEnabled(), enablerList.id, toggleTestHandler);
+    
+    if (testModule.getEnabled()) {
+      enabled++;
+    }
   });
+
+  updateTotalTestCount(total);  
+  updateEnabledTestCount(enabled);
 }
 
 /******************************************************************************/
@@ -180,14 +183,33 @@ function createEnablerList() {
   var enablerContainer = document.createElement('div');
   enablerContainer.id = 'test-enablers-container';
   
+  // Create header to show count of enabled/total tests
+  var header = document.createElement('h3');
+
+  var headerPrefix = document.createTextNode('Running ');
+
+  var enabledCount = document.createElement('span');
+  enabledCount.id = 'test-enabled-count';
+  enabledCount.innerText = '?/';
+
+  var totalCount = document.createElement('span');
+  totalCount.id = 'test-total-count';
+  totalCount.setAttribute('count', 0);
+  totalCount.innerText = '?';
+
+  var headerSuffix = document.createTextNode(' plugin tests');
+  
+  // Create widget to show/hide list
   var expander = document.createElement('span');
   expander.id = 'test-expander';
   expander.innerText = 'Show/hide tests to be run';
   expander.onclick = toggleEnablerVisibility;
 
+  // Create list to contain checkboxes for each test
   var enablerList = document.createElement('div');
   enablerList.id = "test-list";
   
+  // Create select/deselect all buttons (in button bar)
   var checkButtonBar = document.createElement('ul');
   checkButtonBar.classList.add('topcoat-button-bar');
   
@@ -215,12 +237,55 @@ function createEnablerList() {
 
   enablerList.appendChild(checkButtonBar);
   
+  header.appendChild(headerPrefix);
+  header.appendChild(enabledCount);
+  header.appendChild(totalCount);
+  header.appendChild(headerSuffix);
+  
+  enablerContainer.appendChild(header);
   enablerContainer.appendChild(expander);
   enablerContainer.appendChild(enablerList);
   
   buttons.appendChild(enablerContainer);
   
   return enablerList;
+}
+
+/******************************************************************************/
+
+function updateTotalTestCount(totalCount) {
+  var label = document.getElementById('test-total-count');
+  
+  label.setAttribute('count', totalCount);
+  label.innerText = totalCount;
+}
+
+/******************************************************************************/
+
+function updateEnabledTestCount(enabledCount) {
+
+  var enabledLabel = document.getElementById('test-enabled-count');
+  
+  if (!enabledCount) {
+    // Determine how many tests are currently enabled
+    var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
+    var enabled = 0;
+    iterateAutoTests(cdvtests, function(api, testModule) {
+      if (testModule.getEnabled()) {
+        enabled++;
+      }
+    });
+    enabledCount = enabled;
+  }
+  
+  // Compare enabled count vs the total to show if all tests are to be run
+  var totalCount = document.getElementById('test-total-count').getAttribute('count');
+  
+  if (enabledCount == totalCount) {
+    enabledLabel.innerText = 'All ';
+  } else {
+    enabledLabel.innerText = enabledCount + '/';
+  }
 }
 
 /******************************************************************************/
@@ -235,7 +300,9 @@ function toggleSelected(containerId, newCheckedValue) {
       cbs[i].checked = newCheckedValue;
       toggleTestEnabled(cbs[i]);
     }
-  }    
+  }
+  
+  updateEnabledTestCount(newCheckedValue ? cbs.length : 0);
 }
 
 /******************************************************************************/
@@ -287,6 +354,7 @@ function toggleTestHandler(event) {
   var checkbox = event.target;
   
   toggleTestEnabled(checkbox);
+  updateEnabledTestCount();
 }
 
 /******************************************************************************/
@@ -294,6 +362,29 @@ function toggleTestHandler(event) {
 function toggleTestEnabled(checkbox) {
   var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   cdvtests.tests[checkbox.value].setEnabled(checkbox.checked);
+}
+
+/******************************************************************************/
+
+function iterateAutoTests(cdvtests, callback) {
+
+  var testNames = Object.keys(cdvtests.tests);
+
+  var validCount = 0;
+
+  // Iterate over all the registered test modules
+  testNames.forEach(function(api) {
+    var testModule = cdvtests.tests[api];
+    
+    if (!testModule.hasOwnProperty('defineAutoTests')) {
+      return;
+    }
+    
+    validCount++;
+    callback(api, testModule);
+  });
+  
+  return validCount;
 }
 
 /******************************************************************************/
