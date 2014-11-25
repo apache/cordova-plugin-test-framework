@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -99,7 +99,8 @@ jasmineRequire.MedicReporter = function(j$) {
       this.postTests({
           mobilespec:buildResults(),
           platform:(platformMap.hasOwnProperty(p) ? platformMap[p] : p),
-          version:p,
+          version: device.version.toLowerCase(),
+          sha: options.sha,
           timestamp:Math.round(Math.floor((new Date()).getTime() / 1000)),
           model:devmodel
           });
@@ -124,7 +125,9 @@ jasmineRequire.MedicReporter = function(j$) {
       console.log('posting tests');
 
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", serverurl+'/result', true);
+      var doc_id = [options.sha, json.version, json.model].map(encodeURIComponent).join('__');
+      var doc_url = serverurl + '/mobilespec_results/' + doc_id;
+      xhr.open("PUT", doc_url, true);
       xhr.setRequestHeader("Content-Type","application/json")
       xhr.send(JSON.stringify(json));
     }
