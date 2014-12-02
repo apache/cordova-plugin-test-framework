@@ -36,11 +36,11 @@ exports.log = function() {
 
 exports.load = function (callback) {
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "medic.json", true);
+  xhr.open("GET", "../medic.json", true);
   xhr.onload = function() {
     if (xhr.readyState == 4 && xhr.status == 200) {
       var cfg = JSON.parse(xhr.responseText);
-      exports.logurl = cfg.couchdb;
+      exports.logurl = cfg.couchdb || cfg.logurl;
       exports.enabled = true;
       exports.sha = cfg.sha;
       console.log('Loaded Medic Config: logurl=' + exports.logurl);
