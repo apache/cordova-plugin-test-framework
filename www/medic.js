@@ -40,8 +40,9 @@ exports.load = function (callback) {
   xhr.onload = function() {
     if (xhr.readyState == 4 && xhr.status == 200) {
       var cfg = JSON.parse(xhr.responseText);
-      exports.logurl = cfg.logurl;
+      exports.logurl = cfg.couchdb || cfg.logurl;
       exports.enabled = true;
+      exports.sha = cfg.sha;
       console.log('Loaded Medic Config: logurl=' + exports.logurl);
     }
     callback();
