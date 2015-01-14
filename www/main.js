@@ -21,8 +21,6 @@
 
 'use strict';
 
-var autoFirstTime = true;
-
 /******************************************************************************/
 
 function getMode(callback) {
@@ -153,26 +151,19 @@ function createActionButton(title, callback, appendTo) {
 /******************************************************************************/
 
 function setupAutoTestsEnablers(cdvtests) {
-  
   var enablerList = createEnablerList();
 
   // Iterate over all the registered test modules
-  var enabled = 0;
-  var total = iterateAutoTests(cdvtests, function(api, testModule) {
+  iterateAutoTests(cdvtests, function(api, testModule) {
     // For "standard" plugins remove the common/repetitive bits of
     // the api key, for use as the title.  For third-party plugins, the full
     // api will be used as the title
     var title = api.replace(/org\.apache\.cordova\./i, '').replace(/\.tests.tests/i, '');
 
     createEnablerCheckbox(api, title, testModule.getEnabled(), enablerList.id, toggleTestHandler);
-    
-    if (testModule.getEnabled()) {
-      enabled++;
-    }
   });
 
-  updateTotalTestCount(total);  
-  updateEnabledTestCount(enabled);
+  updateEnabledTestCount();
 }
 
 /******************************************************************************/
@@ -182,23 +173,11 @@ function createEnablerList() {
 
   var enablerContainer = document.createElement('div');
   enablerContainer.id = 'test-enablers-container';
-  
+
   // Create header to show count of enabled/total tests
   var header = document.createElement('h3');
+  header.id = 'tests-enabled';
 
-  var headerPrefix = document.createTextNode('Running ');
-
-  var enabledCount = document.createElement('span');
-  enabledCount.id = 'test-enabled-count';
-  enabledCount.innerText = '?/';
-
-  var totalCount = document.createElement('span');
-  totalCount.id = 'test-total-count';
-  totalCount.setAttribute('count', 0);
-  totalCount.innerText = '?';
-
-  var headerSuffix = document.createTextNode(' plugin tests');
-  
   // Create widget to show/hide list
   var expander = document.createElement('span');
   expander.id = 'test-expander';
@@ -208,101 +187,73 @@ function createEnablerList() {
   // Create list to contain checkboxes for each test
   var enablerList = document.createElement('div');
   enablerList.id = "test-list";
-  
+
   // Create select/deselect all buttons (in button bar)
   var checkButtonBar = document.createElement('ul');
   checkButtonBar.classList.add('topcoat-button-bar');
-  
-  for (var i = 0; i < 2; i++)
-  {
+
+  function createSelectToggleButton(title, selected) {
     var barItem = document.createElement('li');
     barItem.classList.add('topcoat-button-bar__item');
-    
+
     var link = document.createElement('a');
-    var selected = (i === 0);
     link.classList.add('topcoat-button-bar__button');
-    link.innerText = selected ? 'Check all' : 'Uncheck all';
+    link.innerText = title;
     link.href = null;
-    link.onclick = (function(select) {
-      return function(e) {
-        e.preventDefault();
-        toggleSelected(enablerList.id, select);
-        return false;
-      };
-    })(selected);
+    link.onclick = function(e) {
+      e.preventDefault();
+      toggleSelected(enablerList.id, selected);
+      return false;
+    };
 
     barItem.appendChild(link);
     checkButtonBar.appendChild(barItem);
-  }
-
+  };
+  createSelectToggleButton('Check all', true);
+  createSelectToggleButton('Uncheck all', false);
   enablerList.appendChild(checkButtonBar);
-  
-  header.appendChild(headerPrefix);
-  header.appendChild(enabledCount);
-  header.appendChild(totalCount);
-  header.appendChild(headerSuffix);
-  
+
   enablerContainer.appendChild(header);
   enablerContainer.appendChild(expander);
   enablerContainer.appendChild(enablerList);
-  
+
   buttons.appendChild(enablerContainer);
-  
+
   return enablerList;
 }
 
 /******************************************************************************/
 
-function updateTotalTestCount(totalCount) {
-  var label = document.getElementById('test-total-count');
-  
-  label.setAttribute('count', totalCount);
-  label.innerText = totalCount;
-}
+function updateEnabledTestCount() {
+  var enabledLabel = document.getElementById('tests-enabled');
 
-/******************************************************************************/
+  // Determine how many tests are currently enabled
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
+  var total = 0;
+  var enabled = 0;
+  iterateAutoTests(cdvtests, function(api, testModule) {
+    total++;
+    if (testModule.getEnabled()) {
+      enabled++;
+    }
+  });
 
-function updateEnabledTestCount(enabledCount) {
-
-  var enabledLabel = document.getElementById('test-enabled-count');
-  
-  if (!enabledCount) {
-    // Determine how many tests are currently enabled
-    var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
-    var enabled = 0;
-    iterateAutoTests(cdvtests, function(api, testModule) {
-      if (testModule.getEnabled()) {
-        enabled++;
-      }
-    });
-    enabledCount = enabled;
-  }
-  
-  // Compare enabled count vs the total to show if all tests are to be run
-  var totalCount = document.getElementById('test-total-count').getAttribute('count');
-  
-  if (enabledCount == totalCount) {
-    enabledLabel.innerText = 'All ';
+  if (enabled == total) {
+    enabledLabel.innerText = 'Running All Tests.';
   } else {
-    enabledLabel.innerText = enabledCount + '/';
+    enabledLabel.innerText = 'Running ' + enabled + ' of ' + total + ' Tests.';
   }
 }
 
 /******************************************************************************/
 
 function toggleSelected(containerId, newCheckedValue) {
-  var container = document.getElementById(containerId);
-  
-  var cbs = container.getElementsByTagName('input');
-  
-  for (var i = 0; i < cbs.length; i++) {
-    if(cbs[i].type === 'checkbox') {
-      cbs[i].checked = newCheckedValue;
-      toggleTestEnabled(cbs[i]);
-    }
-  }
-  
-  updateEnabledTestCount(newCheckedValue ? cbs.length : 0);
+  [].forEach.call(document.getElementById(containerId).getElementsByTagName('input'), function(input) {
+    if (input.type !== 'checkbox') return;
+    input.checked = newCheckedValue;
+    toggleTestEnabled(input);
+  });
+  updateEnabledTestCount();
 }
 
 /******************************************************************************/
@@ -323,7 +274,7 @@ function createEnablerCheckbox(api, title, isEnabled, appendTo, callback) {
 
   var label = document.createElement('label');
   label.classList.add('topcoat-checkbox');
-  
+
   var checkbox = document.createElement('input');
   checkbox.type = "checkbox";
   checkbox.value = api;
@@ -337,10 +288,10 @@ function createEnablerCheckbox(api, title, isEnabled, appendTo, callback) {
 
   var div = document.createElement('div');
   div.classList.add('topcoat-checkbox__checkmark');
-  
+
   var text = document.createElement('span');
   text.innerText = title;
-  
+
   label.appendChild(checkbox);
   label.appendChild(div);
   label.appendChild(text);
@@ -352,7 +303,7 @@ function createEnablerCheckbox(api, title, isEnabled, appendTo, callback) {
 
 function toggleTestHandler(event) {
   var checkbox = event.target;
-  
+
   toggleTestEnabled(checkbox);
   updateEnabledTestCount();
 }
@@ -367,24 +318,13 @@ function toggleTestEnabled(checkbox) {
 /******************************************************************************/
 
 function iterateAutoTests(cdvtests, callback) {
-
-  var testNames = Object.keys(cdvtests.tests);
-
-  var validCount = 0;
-
-  // Iterate over all the registered test modules
-  testNames.forEach(function(api) {
+  Object.keys(cdvtests.tests).forEach(function(api) {
     var testModule = cdvtests.tests[api];
-    
     if (!testModule.hasOwnProperty('defineAutoTests')) {
       return;
     }
-    
-    validCount++;
     callback(api, testModule);
   });
-  
-  return validCount;
 }
 
 /******************************************************************************/
@@ -399,20 +339,12 @@ function runAutoTests() {
   var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   cdvtests.init();
   setupAutoTestsEnablers(cdvtests);
-  
+
   cdvtests.defineAutoTests();
 
   // Run the tests!
   var jasmineEnv = window.jasmine.getEnv();
-  
-  if (autoFirstTime) {
-    autoFirstTime = false;
-    // Uncomment to skip running of tests on initial load
-    //  - If you're testing a specific plugin, you probably want to uncomment,
-    //    so you don't have to wait for all the tests to run every time
-    //return;
-  }
-  
+
   jasmineEnv.execute();
 }
 
