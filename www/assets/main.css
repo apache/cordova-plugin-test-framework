@@ -123,11 +123,10 @@ html, body {
 }
 
 #test-enablers-container {
-  margin: 10px 0px;
+  margin: 10px 5px;
 }
 
 #test-expander {
-  margin: 5px;
   text-decoration: underline;
 }
 
