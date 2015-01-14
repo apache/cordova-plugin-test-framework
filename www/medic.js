@@ -38,7 +38,7 @@ exports.load = function (callback) {
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "../medic.json", true);
   xhr.onload = function() {
-    if (xhr.readyState == 4 && xhr.status == 200) {
+    if (xhr.readyState == 4 && (xhr.status == 0 || xhr.status == 200)) {
       var cfg = JSON.parse(xhr.responseText);
       exports.logurl = cfg.couchdb || cfg.logurl;
       exports.enabled = true;
