@@ -91,15 +91,17 @@ jasmineRequire.MedicReporter = function(j$) {
     this.jasmineDone = function() {
       var p = 'Desktop';
       var devmodel='none';
+      var version = cordova.version;
       if(typeof device != 'undefined') {
         p = device.platform.toLowerCase();
         devmodel=device.model || device.name;
+        version = device.version.toLowerCase();
       }
 
       this.postTests({
           mobilespec:buildResults(),
           platform:(platformMap.hasOwnProperty(p) ? platformMap[p] : p),
-          version: device.version.toLowerCase(),
+          version:version,
           sha: options.sha,
           timestamp:Math.round(Math.floor((new Date()).getTime() / 1000)),
           model:devmodel
