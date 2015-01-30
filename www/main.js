@@ -380,6 +380,15 @@ function runMain() {
           history.go(-1);
       });
   }
+
+  if (cordova.platformId === "windows" || cordova.platformId === "windows8") {
+    var app = WinJS.Application;
+    app.addEventListener("error", function (err) {
+        // We do not want an unhandled exception to crash the test app
+        // Retruning true marks it as being handled
+        return true;
+      });
+  }
 }
 
 /******************************************************************************/
