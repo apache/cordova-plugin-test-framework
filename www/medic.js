@@ -35,30 +35,28 @@ exports.log = function() {
 };
 
 exports.load = function (callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "../medic.json", true);
-  xhr.onload = function() {
-    if (xhr.readyState == 4 && (xhr.status == 0 || xhr.status == 200)) {
-      var cfg = JSON.parse(xhr.responseText);
-      exports.logurl = cfg.couchdb || cfg.logurl;
-      exports.enabled = true;
-      exports.sha = cfg.sha;
-      console.log('Loaded Medic Config: logurl=' + exports.logurl);
-    }
-    callback();
-  }
-  xhr.onerror = function() {
-   callback();
-  }
+  var cfg = null;
 
   try {
+    // attempt to synchronously load medic config
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../medic.json", false);
     xhr.send(null);
-  }
-  catch(ex) {
-    // some platforms throw on a file not found
+    cfg = JSON.parse(xhr.responseText);
+  } catch (ex) { }
+
+  // config is available
+  if (cfg) {
+    exports.logurl = cfg.couchdb || cfg.logurl;
+    exports.sha = cfg.sha;
+    exports.enabled = true;
+    console.log('Loaded Medic Config: logurl=' + exports.logurl);
+  } else {
+    // config does not exist
     console.log('Did not find medic config file');
-    setTimeout(function(){
-        callback();
-    },0);
   }
+
+  setTimeout(function () {
+      callback();
+  }, 0);
 }
