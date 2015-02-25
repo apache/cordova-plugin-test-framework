@@ -1,0 +1,20 @@
+{
+  "name": "cordova-plugin-test-framework",
+  "version": "0.0.2-dev",
+  "description": "Cordova Test Framework Plugin",
+  "cordova": {
+    "id": "org.apache.cordova.test-framework",
+    "platforms": []
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git-wip-us.apache.org/repos/asf/cordova-plugin-test-framework.git"
+  },
+  "keywords": [
+    "cordova",
+    "test",
+    "ecosystem:cordova"
+  ],
+  "author": "Apache Software Foundation",
+  "license": "Apache 2.0"
+}
