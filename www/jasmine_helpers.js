@@ -31,34 +31,15 @@ exports.setUpJasmine = function() {
     jasmineEnv.catchExceptions(false);
 
     // Set up jasmine interface
-    var jasmineInterface = Object.create(null);
-    jasmineInterface.jasmine = jasmine;
-
-    // Fill in jasmineInterface with built-ins
-    var jasmine_env_functions = ['describe',
-                                 'xdescribe',
-                                 'it',
-                                 'xit',
-                                 'beforeEach',
-                                 'afterEach',
-                                 'expect',
-                                 'pending',
-                                 'spyOn',
-                                 'addCustomEqualityTester',
-                                 'addMatchers'];
-
-    jasmine_env_functions.forEach(function(fn) {
-    jasmineInterface[fn] = jasmineEnv[fn].bind(jasmineEnv);
-    });
-    jasmineInterface.clock = jasmineEnv.clock;
+    var jasmineInterface = jasmineRequire.interface(jasmine, jasmineEnv);
 
     // Add Reporters
     addJasmineReporters(jasmineInterface, jasmineEnv);
 
     // Add Spec Filter
     jasmineEnv.specFilter = function(spec) {
-    //console.log(spec.getFullName());
-    return true;
+        //console.log(spec.getFullName());
+        return true;
     };
 
     return jasmineInterface;
