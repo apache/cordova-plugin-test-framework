@@ -42,6 +42,11 @@ exports.setUpJasmine = function() {
         return true;
     };
 
+    // Jasmine 2.2.0 moved this symbol, so we add a shim here.
+    jasmine.Expectation.addMatchers = jasmine.Expectation.addMatchers || function() {
+        return jasmine.addMatchers.apply(this, arguments);
+    };
+
     return jasmineInterface;
 }
 
