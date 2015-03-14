@@ -21,7 +21,7 @@
 
 # Cordova Plugin Test Framework
 
-The `org.apache.cordova.test-framework` plugin does two things:
+The `cordova-plugin-test-framework` plugin does two things:
 
 1. [Defines the interface for cordova plugins to write tests](#interface)
 2. [Provides a test harness for actually running those tests](#harness)
@@ -50,16 +50,16 @@ Tests run directly inside existing cordova projects, so you can rapidly switch b
 
 ### Where do tests live?
 
-Add a directory named `tests` to the root of your plugin. Within this directory, create a nested `plugin.xml` for the tests plugin. It should have a plugin id with the form `plugin-id.tests` (e.g. the `org.apache.cordova.device` plugin has the nested id `org.apache.cordova.device.tests`) and should contain a `<js-module>` named `tests`. E.g:
+Add a directory named `tests` to the root of your plugin. Within this directory, create a nested `plugin.xml` for the tests plugin. It should have a plugin id with the form `plugin-id-tests` (e.g. the `cordova-plugin-device` plugin has the nested id `cordova-plugin-device-tests`) and should contain a `<js-module>` named `tests`. E.g:
 
 ```
 <js-module src="tests/tests.js" name="tests">
 </js-module>
 ```
 
-For example, the `org.apache.cordova.device` plugin has this nested [`plugin.xml`](https://github.com/apache/cordova-plugin-device/blob/master/tests/plugin.xml).
+For example, the `cordova-plugin-device` plugin has this nested [`plugin.xml`](https://github.com/apache/cordova-plugin-device/blob/master/tests/plugin.xml).
 
-The `org.apache.cordova.test-framework` plugin will automatically find all `tests` modules across all plugins for which the nested tests plugin is installed.
+The `cordova-plugin-test-framework` plugin will automatically find all `tests` modules across all plugins for which the nested tests plugin is installed.
 
 ### Defining Auto Tests
 
@@ -117,7 +117,7 @@ Note: Your tests will automatically be labeled with your plugin id, so do not pr
 <a name="example">
 ### Example
 
-See: [`org.apache.cordova.device` tests](https://github.com/apache/cordova-plugin-device/blob/master/tests/tests.js).
+See: [`cordova-plugin-device` tests](https://github.com/apache/cordova-plugin-device/blob/master/tests/tests.js).
 
 <a name="harness" />
 ## Running Plugin Tests
@@ -133,7 +133,7 @@ See: [`org.apache.cordova.device` tests](https://github.com/apache/cordova-plugi
 
 ## FAQ
 
-* Q: Should I add `org.apache.cordova.test-framework` as a `<dependency>` of my plugin?
+* Q: Should I add `cordova-plugin-test-framework` as a `<dependency>` of my plugin?
   * A: No.  The end-user should decide if they want to install the test framework, not your plugin (most users won't).
 
 * Q: What do I do if my plugin tests must have very large assets?
