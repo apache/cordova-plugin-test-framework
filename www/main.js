@@ -110,7 +110,7 @@ exports.wrapConsole = function() {
   }
 
   function createCustomLogger(type) {
-    var medic = require('cordova-plugin-test-framework.medic');
+    var medic = require('org.apache.cordova.test-framework.medic');
     return function() {
       origConsole[type].apply(origConsole, arguments);
       // TODO: encode log type somehow for medic logs?
@@ -228,7 +228,7 @@ function updateEnabledTestCount() {
   var enabledLabel = document.getElementById('tests-enabled');
 
   // Determine how many tests are currently enabled
-  var cdvtests = cordova.require('cordova-plugin-test-framework.cdvtests');
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   var total = 0;
   var enabled = 0;
   iterateAutoTests(cdvtests, function(api, testModule) {
@@ -311,7 +311,7 @@ function toggleTestHandler(event) {
 /******************************************************************************/
 
 function toggleTestEnabled(checkbox) {
-  var cdvtests = cordova.require('cordova-plugin-test-framework.cdvtests');
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   cdvtests.tests[checkbox.value].setEnabled(checkbox.checked);
 }
 
@@ -336,7 +336,7 @@ function runAutoTests() {
   createActionButton('Reset App', location.reload.bind(location));
   createActionButton('Back', setMode.bind(null, 'main'));
 
-  var cdvtests = cordova.require('cordova-plugin-test-framework.cdvtests');
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   cdvtests.init();
   setupAutoTestsEnablers(cdvtests);
 
@@ -363,7 +363,7 @@ function runManualTests() {
     createActionButton('Reset App', location.reload.bind(location));
     createActionButton('Back', setMode.bind(null, 'manual'));
   };
-  var cdvtests = cordova.require('cordova-plugin-test-framework.cdvtests');
+  var cdvtests = cordova.require('org.apache.cordova.test-framework.cdvtests');
   cdvtests.defineManualTests(contentEl, beforeEach, createActionButton);
 }
 
@@ -400,7 +400,7 @@ exports.init = function() {
   attachEvents();
   exports.wrapConsole();
 
-  var medic = require('cordova-plugin-test-framework.medic');
+  var medic = require('org.apache.cordova.test-framework.medic');
   medic.load(function() {
     if (medic.enabled) {
       setMode('auto');

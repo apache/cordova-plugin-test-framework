@@ -66,7 +66,7 @@ function addJasmineReporters(jasmineInterface, jasmineEnv) {
     jasmineInterface.htmlReporter.initialize();
     jasmineEnv.addReporter(jasmineInterface.htmlReporter);
 
-    var medic = require('cordova-plugin-test-framework.medic');
+    var medic = require('org.apache.cordova.test-framework.medic');
 
     if (medic.enabled) {
         jasmineRequire.medic(jasmineInterface.jasmine);
