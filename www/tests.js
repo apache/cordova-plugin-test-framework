@@ -79,7 +79,7 @@ function requireAllTestModules() {
 }
 
 function createJasmineInterface() {
-  var jasmine_helpers = require('org.apache.cordova.test-framework.jasmine_helpers');
+  var jasmine_helpers = require('cordova-plugin-test-framework.jasmine_helpers');
   var jasmineInterface = jasmine_helpers.setUpJasmine();
   return jasmineInterface;
 }

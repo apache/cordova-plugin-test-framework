@@ -3,7 +3,7 @@
   "version": "0.0.2-dev",
   "description": "Cordova Test Framework Plugin",
   "cordova": {
-    "id": "org.apache.cordova.test-framework",
+    "id": "cordova-plugin-test-framework",
     "platforms": []
   },
   "repository": {

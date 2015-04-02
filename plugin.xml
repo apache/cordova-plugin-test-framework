@@ -21,7 +21,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="org.apache.cordova.test-framework"
+    id="cordova-plugin-test-framework"
     version="0.0.2-dev">
     <name>Test Framework</name>
     <description>Cordova Test Framework Plugin</description>
