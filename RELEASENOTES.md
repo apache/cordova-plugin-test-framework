@@ -23,3 +23,13 @@
 
 ### 0.0.1 (Feb 04, 2015)
 * Initial release
+
+### 1.0.0 (Apr 15, 2015)
+* CB-8746 gave plugin major version bump
+* CB-8683 changed plugin-id to pacakge-name
+* CB-8653 Updated Readme
+* CB-8528 Add a shim for `jasmine.Expectation.addMatchers` being moved in jasmine 2.2.0
+* CB-8528 Update test framework plugin to use Jasmine 2.2.0 (close #11)
+* Close already merged PR (close #10)
+* CB-8538 Added package.json file
+* CB-8385 Ensure plugin-test-framework trigger tests only once
