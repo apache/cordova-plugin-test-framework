@@ -70,18 +70,22 @@ function setTitle(title) {
 
 function setLogVisibility(visible) {
   if (visible) {
-    document.getElementById('log').classList.add('expanded');
+    document.querySelector('body').classList.add('expanded-log');
   } else {
-    document.getElementById('log').classList.remove('expanded');
+    document.querySelector('body').classList.add('expanded-log');
   }
 }
 
+function getLogVisibility() {
+  var e = document.querySelector('body');
+  return e.classList.contains('expanded-log');
+}
+
 function toggleLogVisibility() {
-  var log = document.getElementById('log');
-  if (log.classList.contains('expanded')) {
-    log.classList.remove('expanded');
+  if (getLogVisibility()) {
+    setLogVisibility(false);
   } else {
-    log.classList.add('expanded');
+    setLogVisibility(true);
   }
 }
 

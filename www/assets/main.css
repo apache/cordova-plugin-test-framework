@@ -64,7 +64,11 @@ html, body {
   transition: 0.25s ease;
 }
 
-#log.expanded {
+body.expanded-log #middle {
+  margin-bottom: 40%;
+}
+
+body.expanded-log #log {
   height: 40%;
 }
 
