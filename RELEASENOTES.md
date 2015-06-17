@@ -33,3 +33,6 @@
 * Close already merged PR (close #10)
 * CB-8538 Added package.json file
 * CB-8385 Ensure plugin-test-framework trigger tests only once
+
+### 1.0.1 (Jun 17, 2015)
+* added ratignore file
