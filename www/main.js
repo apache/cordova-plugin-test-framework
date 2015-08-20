@@ -381,11 +381,11 @@ function runMain() {
       });
   }
 
-  if (cordova.platformId === "windows" || cordova.platformId === "windows8") {
+  if (cordova.platformId === "windows" && typeof WinJS !== 'undefined') {
     var app = WinJS.Application;
     app.addEventListener("error", function (err) {
         // We do not want an unhandled exception to crash the test app
-        // Retruning true marks it as being handled
+        // Returning true marks it as being handled
         return true;
       });
   }
