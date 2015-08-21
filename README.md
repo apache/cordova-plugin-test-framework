@@ -68,7 +68,7 @@ Simply export a function named `defineAutoTests`, which (gasp!) defines your aut
 ```
 exports.defineAutoTests = function() {
 
-  define('awesome tests', function() {
+  describe('awesome tests', function() {
     it('do something sync', function() {
       expect(1).toBe(1);
       ...
@@ -83,7 +83,7 @@ exports.defineAutoTests = function() {
     });
   });
 
-  define('more awesome tests', function() {
+  describe('more awesome tests', function() {
     ...
   });
 
