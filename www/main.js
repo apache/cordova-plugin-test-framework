@@ -21,6 +21,11 @@
 
 'use strict';
 
+var LOG_HEADER_HEIGHT = 20,
+    CONTENT_TOP_OFFSET = 30;
+
+var isWin = cordova.platformId === "windows";
+
 /******************************************************************************/
 
 function getMode(callback) {
@@ -69,12 +74,33 @@ function setTitle(title) {
 /******************************************************************************/
 
 function setLogVisibility(visible) {
-  if (visible) {
-    document.querySelector('body').classList.add('expanded-log');
-  } else {
-    document.querySelector('body').classList.add('expanded-log');
-  }
+    if (visible) {
+        document.querySelector('body').classList.add('expanded-log');
+
+        var h = document.querySelector('body').offsetHeight;
+
+        if (isWin) {
+            document.getElementById('middle').style.height = (h * 0.6 - LOG_HEADER_HEIGHT - CONTENT_TOP_OFFSET) + "px";
+            document.getElementById('middle').style.marginBottom = (h * 0.4) + "px";
+            document.getElementById('middle').style.paddingBottom = (h * 0.4) + "px";
+        }
+    } else {
+        document.querySelector('body').classList.remove('expanded-log');
+
+        if (isWin) {
+            document.getElementById('middle').style.height = "";
+            document.getElementById('middle').style.marginBottom = "";
+            document.getElementById('middle').style.paddingBottom = "";
+        }
+    }
 }
+
+window.onresize = function (event) {
+    // Update content and log heights
+    if (isWin) {
+        setLogVisibility(getLogVisibility());
+    }
+};
 
 function getLogVisibility() {
   var e = document.querySelector('body');
@@ -385,7 +411,7 @@ function runMain() {
       });
   }
 
-  if (cordova.platformId === "windows" && typeof WinJS !== 'undefined') {
+  if (isWin && typeof WinJS !== 'undefined') {
     var app = WinJS.Application;
     app.addEventListener("error", function (err) {
         // We do not want an unhandled exception to crash the test app
