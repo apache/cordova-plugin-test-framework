@@ -24,7 +24,8 @@
 var LOG_HEADER_HEIGHT = 20,
     CONTENT_TOP_OFFSET = 30;
 
-var isWin = cordova.platformId === "windows";
+var isWin = cordova.platformId === "windows",
+    isWP8 = cordova.platformId === "windowsphone";
 
 /******************************************************************************/
 
@@ -77,9 +78,9 @@ function setLogVisibility(visible) {
     if (visible) {
         document.querySelector('body').classList.add('expanded-log');
 
-        var h = document.querySelector('body').offsetHeight;
+        if (isWin || isWP8) {
+            var h = document.querySelector('body').offsetHeight;
 
-        if (isWin) {
             document.getElementById('middle').style.height = (h * 0.6 - LOG_HEADER_HEIGHT - CONTENT_TOP_OFFSET) + "px";
             document.getElementById('middle').style.marginBottom = (h * 0.4) + "px";
             document.getElementById('middle').style.paddingBottom = (h * 0.4) + "px";
@@ -87,7 +88,7 @@ function setLogVisibility(visible) {
     } else {
         document.querySelector('body').classList.remove('expanded-log');
 
-        if (isWin) {
+        if (isWin || isWP8) {
             document.getElementById('middle').style.height = "";
             document.getElementById('middle').style.marginBottom = "";
             document.getElementById('middle').style.paddingBottom = "";
@@ -97,7 +98,7 @@ function setLogVisibility(visible) {
 
 window.onresize = function (event) {
     // Update content and log heights
-    if (isWin) {
+    if (isWin || isWP8) {
         setLogVisibility(getLogVisibility());
     }
 };
