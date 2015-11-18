@@ -20,9 +20,8 @@
 -->
 # Release Notes
 
-
-### 0.0.1 (Feb 04, 2015)
-* Initial release
+### 1.0.1 (Jun 17, 2015)
+* added ratignore file
 
 ### 1.0.0 (Apr 15, 2015)
 * CB-8746 gave plugin major version bump
@@ -34,5 +33,5 @@
 * CB-8538 Added package.json file
 * CB-8385 Ensure plugin-test-framework trigger tests only once
 
-### 1.0.1 (Jun 17, 2015)
-* added ratignore file
+### 0.0.1 (Feb 04, 2015)
+* Initial release
