@@ -20,6 +20,11 @@
 -->
 # Release Notes
 
+### 1.1.0 (Nov 18, 2015)
+* CB-10035 Updated `RELEASENOTES` to be newest to oldest
+* CB-8973: Changed the functionality of making the `log` appear and disappear
+* Ensure `WinJS` is available when adding **Windows** unhandled error hook
+
 ### 1.0.1 (Jun 17, 2015)
 * added ratignore file
 
