@@ -59,6 +59,7 @@ function addJasmineReporters(jasmineInterface, jasmineEnv) {
         env: jasmineEnv,
         queryString: function() { return null; },
         onRaiseExceptionsClick: function() { },
+        onThrowExpectationsClick: function() { },
         getContainer: function() { return document.getElementById('content'); },
         createElement: function() { return document.createElement.apply(document, arguments); },
         createTextNode: function() { return document.createTextNode.apply(document, arguments); },
