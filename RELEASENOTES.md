@@ -20,6 +20,9 @@
 -->
 # Release Notes
 
+### 1.1.1 (Jan 15, 2016)
+* CB-10318 Do not wrap test title
+
 ### 1.1.0 (Nov 18, 2015)
 * [CB-10035](https://issues.apache.org/jira/browse/CB-10035) Updated `RELEASENOTES` to be newest to oldest
 * [CB-8973](https://issues.apache.org/jira/browse/CB-8973): Changed the functionality of making the `log` appear and disappear
