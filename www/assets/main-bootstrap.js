@@ -19,8 +19,8 @@
  *
 */
 
-'use strict';
-
 document.addEventListener("deviceready", function() {
+  'use strict';
+
   cordova.require('cordova-plugin-test-framework.main').init();
 });

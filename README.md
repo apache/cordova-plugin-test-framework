@@ -19,6 +19,8 @@
 #
 -->
 
+[![Build Status](https://travis-ci.org/apache/cordova-plugin-test-framework.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-test-framework)
+
 # Cordova Plugin Test Framework
 
 The `cordova-plugin-test-framework` plugin does two things:

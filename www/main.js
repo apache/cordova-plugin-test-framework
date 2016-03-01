@@ -19,6 +19,8 @@
  *
 */
 
+/* global WinJS */
+/* jshint -W097 */
 'use strict';
 
 var LOG_HEADER_HEIGHT = 20,
@@ -239,7 +241,7 @@ function createEnablerList() {
 
     barItem.appendChild(link);
     checkButtonBar.appendChild(barItem);
-  };
+  }
   createSelectToggleButton('Check all', true);
   createSelectToggleButton('Uncheck all', false);
   enablerList.appendChild(checkButtonBar);

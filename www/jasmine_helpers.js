@@ -19,6 +19,7 @@
  *
 */
 
+/* jshint -W097 */
 'use strict';
 
 exports.setUpJasmine = function() {
@@ -48,7 +49,7 @@ exports.setUpJasmine = function() {
     };
 
     return jasmineInterface;
-}
+};
 
 function addJasmineReporters(jasmineInterface, jasmineEnv) {
     jasmineInterface.jsApiReporter = new jasmineInterface.jasmine.JsApiReporter({ timer: new jasmineInterface.jasmine.Timer() });

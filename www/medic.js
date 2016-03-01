@@ -19,6 +19,7 @@
  *
 */
 
+/* jshint -W097 */
 'use strict';
 
 exports.logurl = 'http://127.0.0.1:7800';
@@ -59,4 +60,4 @@ exports.load = function (callback) {
   setTimeout(function () {
       callback();
   }, 0);
-}
+};

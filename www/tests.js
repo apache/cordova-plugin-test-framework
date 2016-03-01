@@ -19,6 +19,8 @@
  *
 */
 
+/* jshint jasmine: true */
+/* jshint -W097 */
 'use strict';
 
 exports.tests = Object.create(null);
@@ -44,7 +46,8 @@ function TestModule(api) {
 }
 
 function getTestsObject(api) {
-  return exports.tests[api] = exports.tests[api] || new TestModule(api);
+  exports.tests[api] = exports.tests[api] || new TestModule(api);
+  return exports.tests[api];
 }
 
 function requireAllTestModules() {
@@ -129,4 +132,4 @@ exports.defineManualTests = function(contentEl, beforeEach, createActionButton) 
 
 exports.init = function() {
   requireAllTestModules();
-}
+};
