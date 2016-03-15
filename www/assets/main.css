@@ -29,6 +29,7 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 #title {
@@ -87,7 +88,7 @@ body.expanded-log #log {
   bottom: 0;
   width: 100%;
   overflow-x: none;
-  overflow-y: auto;
+  overflow-y: scroll;
   background-color: white;
 }
 
