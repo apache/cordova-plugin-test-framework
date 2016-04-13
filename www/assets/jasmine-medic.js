@@ -64,7 +64,7 @@ jasmineRequire.MedicReporter = function(j$) {
     };
 
     this.specStarted = function(result) {
-      // Start timing this spec
+       console.log('>>>>> Spec started: ' + result.description);
     };
 
     this.specDone = function(result) {
@@ -78,6 +78,7 @@ jasmineRequire.MedicReporter = function(j$) {
       if (result.status == "pending") {
         pendingSpecCount++;
       }
+       console.log('>>>>> Spec completed: ' + result.description);
     };
 
     var buildResults = function(){
