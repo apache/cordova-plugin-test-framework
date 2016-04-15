@@ -20,6 +20,10 @@
 -->
 # Release Notes
 
+### 1.1.2 (Apr 15, 2016)
+* CB-10876 Enable inertia scrolling in test framework
+* CB-10636 Add `JSHint` for plugins
+
 ### 1.1.1 (Jan 15, 2016)
 * CB-10318 Do not wrap test title
 
