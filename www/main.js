@@ -143,11 +143,8 @@ exports.wrapConsole = function() {
   }
 
   function createCustomLogger(type) {
-    var medic = require('cordova-plugin-test-framework.medic');
     return function() {
       origConsole[type].apply(origConsole, arguments);
-      // TODO: encode log type somehow for medic logs?
-      medic.log.apply(medic, arguments);
       appendToOnscreenLog(type, arguments);
       setLogVisibility(true);
     };

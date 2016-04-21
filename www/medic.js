@@ -26,15 +26,6 @@ exports.logurl = 'http://127.0.0.1:7800';
 
 exports.enabled = false;
 
-exports.log = function() {
-  if (!exports.enabled)
-    return;
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", exports.logurl, true);
-  xhr.setRequestHeader("Content-Type", "text/plain");
-  xhr.send(Array.prototype.slice.apply(arguments));
-};
-
 exports.load = function (callback) {
   var cfg = null;
 
