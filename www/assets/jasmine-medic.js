@@ -114,6 +114,18 @@ jasmineRequire.MedicReporter = function(j$) {
       var doc_id = [options.sha, json.version, json.model].map(encodeURIComponent).join('__');
       var doc_url = serverurl + '/mobilespec_results/' + doc_id;
       xhr.open("PUT", doc_url, true);
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            console.log("Posting results to CouchDB succeeded: " + xhr.responseText);
+          } else {
+            console.log("Error posting to CouchDB: " + xhr.statusText);
+          }
+        }
+      };
+      xhr.onerror = function (e) {
+        console.log("Error posting to CouchDB: " + xhr.statusText);
+      };
       xhr.setRequestHeader("Content-Type","application/json");
       xhr.send(JSON.stringify(json));
     };
