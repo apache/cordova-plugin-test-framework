@@ -20,12 +20,18 @@
 -->
 # Release Notes
 
+### 1.1.3 (Sep 08, 2016)
+* [CB-9071](https://issues.apache.org/jira/browse/CB-9071) Update test framework plugin to use Jasmine 2.4.1
+* Add pull request template.
+* [CB-11124](https://issues.apache.org/jira/browse/CB-11124) Fixing cordova-ios build failure due to unnecessary post calls to couchdb and adding handlers to xhr call
+* Add spec started/completed log
+
 ### 1.1.2 (Apr 15, 2016)
-* CB-10876 Enable inertia scrolling in test framework
-* CB-10636 Add `JSHint` for plugins
+* [CB-10876](https://issues.apache.org/jira/browse/CB-10876) Enable inertia scrolling in test framework
+* [CB-10636](https://issues.apache.org/jira/browse/CB-10636) Add `JSHint` for plugins
 
 ### 1.1.1 (Jan 15, 2016)
-* CB-10318 Do not wrap test title
+* [CB-10318](https://issues.apache.org/jira/browse/CB-10318) Do not wrap test title
 
 ### 1.1.0 (Nov 18, 2015)
 * [CB-10035](https://issues.apache.org/jira/browse/CB-10035) Updated `RELEASENOTES` to be newest to oldest
