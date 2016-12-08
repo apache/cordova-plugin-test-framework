@@ -20,6 +20,11 @@
 -->
 # Release Notes
 
+### 1.1.4 (Dec 07, 2016)
+* [CB-11917](https://issues.apache.org/jira/browse/CB-11917) - Remove pull request template checklist item: "iCLA has been submitted…"
+* Edit package.json license to match SPDX id
+* [CB-11832](https://issues.apache.org/jira/browse/CB-11832) Incremented plugin version.
+
 ### 1.1.3 (Sep 08, 2016)
 * [CB-9071](https://issues.apache.org/jira/browse/CB-9071) Update test framework plugin to use Jasmine 2.4.1
 * Add pull request template.
