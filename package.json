@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-test-framework",
-  "version": "1.1.5-dev",
+  "version": "1.1.5",
   "description": "Cordova Test Framework Plugin",
   "cordova": {
     "id": "cordova-plugin-test-framework",
