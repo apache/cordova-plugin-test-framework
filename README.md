@@ -48,6 +48,7 @@ Tests run directly inside existing cordova projects, so you can rapidly switch b
 
 
 <a name="interface" />
+
 ## Writing Plugin Tests
 
 ### Where do tests live?
@@ -117,11 +118,13 @@ Note: Your tests will automatically be labeled with your plugin id, so do not pr
 
 
 <a name="example">
+
 ### Example
 
 See: [`cordova-plugin-device` tests](https://github.com/apache/cordova-plugin-device/blob/master/tests/tests.js).
 
 <a name="harness" />
+
 ## Running Plugin Tests
 
 1. Use your existing cordova app, or create a new one.
