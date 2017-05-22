@@ -48,6 +48,7 @@ Tests run directly inside existing cordova projects, so you can rapidly switch b
 
 
 <a name="interface" />
+
 ## Writing Plugin Tests
 
 ### Where do tests live?
@@ -62,6 +63,8 @@ Add a directory named `tests` to the root of your plugin. Within this directory,
 For example, the `cordova-plugin-device` plugin has this nested [`plugin.xml`](https://github.com/apache/cordova-plugin-device/blob/master/tests/plugin.xml).
 
 The `cordova-plugin-test-framework` plugin will automatically find all `tests` modules across all plugins for which the nested tests plugin is installed.
+
+> **Important:** Inside your project's `tests/` folder you also have to create a `package.json`. See the [`package.json` of the `cordova-plugin-device`](https://github.com/apache/cordova-plugin-device/blob/736c7b9dfdfa25a924ffc3d1e409450633a8c00f/tests/package.json) for an example.
 
 ### Defining Auto Tests
 
