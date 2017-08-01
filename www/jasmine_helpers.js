@@ -19,10 +19,10 @@
  *
 */
 
-/* jshint -W097 */
+/* eslint no-undef : 0 */
 'use strict';
 
-exports.setUpJasmine = function() {
+exports.setUpJasmine = function () {
     // Set up jasmine
     var jasmine = jasmineRequire.core(jasmineRequire);
     jasmineRequire.html(jasmine);
@@ -38,31 +38,31 @@ exports.setUpJasmine = function() {
     addJasmineReporters(jasmineInterface, jasmineEnv);
 
     // Add Spec Filter
-    jasmineEnv.specFilter = function(spec) {
-        //console.log(spec.getFullName());
+    jasmineEnv.specFilter = function (spec) {
+        // console.log(spec.getFullName());
         return true;
     };
 
     // Jasmine 2.2.0 moved this symbol, so we add a shim here.
-    jasmine.Expectation.addMatchers = jasmine.Expectation.addMatchers || function() {
+    jasmine.Expectation.addMatchers = jasmine.Expectation.addMatchers || function () {
         return jasmine.addMatchers.apply(this, arguments);
     };
 
     return jasmineInterface;
 };
 
-function addJasmineReporters(jasmineInterface, jasmineEnv) {
+function addJasmineReporters (jasmineInterface, jasmineEnv) {
     jasmineInterface.jsApiReporter = new jasmineInterface.jasmine.JsApiReporter({ timer: new jasmineInterface.jasmine.Timer() });
     jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
 
     jasmineInterface.htmlReporter = new jasmineInterface.jasmine.HtmlReporter({
         env: jasmineEnv,
-        queryString: function() { return null; },
-        onRaiseExceptionsClick: function() { },
-        onThrowExpectationsClick: function() { },
-        getContainer: function() { return document.getElementById('content'); },
-        createElement: function() { return document.createElement.apply(document, arguments); },
-        createTextNode: function() { return document.createTextNode.apply(document, arguments); },
+        queryString: function () { return null; },
+        onRaiseExceptionsClick: function () { },
+        onThrowExpectationsClick: function () { },
+        getContainer: function () { return document.getElementById('content'); },
+        createElement: function () { return document.createElement.apply(document, arguments); },
+        createTextNode: function () { return document.createTextNode.apply(document, arguments); },
         timer: new jasmineInterface.jasmine.Timer()
     });
     jasmineInterface.htmlReporter.initialize();
@@ -80,5 +80,5 @@ function addJasmineReporters(jasmineInterface, jasmineEnv) {
         jasmineInterface.MedicReporter.initialize();
         jasmineEnv.addReporter(jasmineInterface.MedicReporter);
     }
-    
+
 }

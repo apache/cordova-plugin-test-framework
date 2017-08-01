@@ -19,117 +19,110 @@
  *
 */
 
-/* jshint jasmine: true */
-/* jshint -W097 */
 'use strict';
 
 exports.tests = Object.create(null);
 
-function TestModule(api) {
-  var name = api;
-  var enabled = true;
+function TestModule (api) {
+    var name = api;
+    var enabled = true;
 
-  var enabledPref = localStorage.getItem('cordova-tests-enabled-' + name);
-  if (enabledPref)
-  {
-    enabled = (enabledPref == true.toString());
-  }
-  
-  this.getEnabled = function () {
-    return enabled;
-  };
-  
-  this.setEnabled = function (isEnabled) {
-    enabled = isEnabled;
-    localStorage.setItem('cordova-tests-enabled-' + name, enabled);
-  };
-}
-
-function getTestsObject(api) {
-  exports.tests[api] = exports.tests[api] || new TestModule(api);
-  return exports.tests[api];
-}
-
-function requireAllTestModules() {
-  // This finds all js-modules named "tests" (regardless of plugins they came from)
-  var test_modules = cordova.require('cordova/plugin_list')
-    .map(function(jsmodule) {
-      return jsmodule.id;
-    })
-    .filter(function(id) {
-      return /\.tests$/.test(id);
-    });
-
-  // Map auto / manual test definitions for each, but without actually running the handlers
-  test_modules.forEach(function(id) {
-    try {
-      var plugintests = cordova.require(id);
-
-      if (plugintests.hasOwnProperty('defineAutoTests')) {
-        getTestsObject(id).defineAutoTests = function() {
-          describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests));
-        };
-      }
-
-      if (plugintests.hasOwnProperty('defineManualTests')) {
-        getTestsObject(id).defineManualTests = plugintests.defineManualTests.bind(plugintests);
-      }
-    } catch(ex) {
-      console.warn('Failed to load tests: ', id);
-      return;
+    var enabledPref = localStorage.getItem('cordova-tests-enabled-' + name); // eslint-disable-line no-undef
+    if (enabledPref) {
+        enabled = (enabledPref === true.toString());
     }
-  });
+
+    this.getEnabled = function () {
+        return enabled;
+    };
+
+    this.setEnabled = function (isEnabled) {
+        enabled = isEnabled;
+        localStorage.setItem('cordova-tests-enabled-' + name, enabled); // eslint-disable-line no-undef
+    };
 }
 
-function createJasmineInterface() {
-  var jasmine_helpers = require('cordova-plugin-test-framework.jasmine_helpers');
-  var jasmineInterface = jasmine_helpers.setUpJasmine();
-  return jasmineInterface;
+function getTestsObject (api) {
+    exports.tests[api] = exports.tests[api] || new TestModule(api);
+    return exports.tests[api];
 }
 
-function attachJasmineInterfaceToGlobal() {
-  var jasmineInterface = createJasmineInterface();
-  for (var property in jasmineInterface) {
-    window[property] = jasmineInterface[property];
-  }
-}
+function requireAllTestModules () {
+    // This finds all js-modules named "tests" (regardless of plugins they came from)
+    var test_modules = cordova.require('cordova/plugin_list') // eslint-disable-line no-undef
+        .map(function (jsmodule) {
+            return jsmodule.id;
+        })
+        .filter(function (id) {
+            return /\.tests$/.test(id);
+        });
 
-function detachJasmineInterfaceFromGlobal() {
-  var jasmineInterface = createJasmineInterface();
-  for (var property in jasmineInterface) {
-    delete window[property];
-  }
-}
+    // Map auto / manual test definitions for each, but without actually running the handlers
+    test_modules.forEach(function (id) {
+        try {
+            var plugintests = cordova.require(id); // eslint-disable-line no-undef
 
-exports.defineAutoTests = function() {
-  requireAllTestModules();
-  attachJasmineInterfaceToGlobal();
+            if (plugintests.hasOwnProperty('defineAutoTests')) {
+                getTestsObject(id).defineAutoTests = function () {
+                    describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests)); // eslint-disable-line no-undef
+                };
+            }
 
-  Object.keys(exports.tests).forEach(function(key) {
-    if (!exports.tests[key].getEnabled())
-      return;
-    if (!exports.tests[key].hasOwnProperty('defineAutoTests'))
-      return;
-    exports.tests[key].defineAutoTests();
-  });
-};
+            if (plugintests.hasOwnProperty('defineManualTests')) {
+                getTestsObject(id).defineManualTests = plugintests.defineManualTests.bind(plugintests);
+            }
+        } catch (ex) {
+            console.warn('Failed to load tests: ', id);
 
-exports.defineManualTests = function(contentEl, beforeEach, createActionButton) {
-  requireAllTestModules();
-  detachJasmineInterfaceFromGlobal();
-
-  Object.keys(exports.tests).forEach(function(key) {
-    if (!exports.tests[key].getEnabled())
-      return;
-    if (!exports.tests[key].hasOwnProperty('defineManualTests'))
-      return;
-    createActionButton(key, function() {
-      beforeEach(key);
-      exports.tests[key].defineManualTests(contentEl, createActionButton);
+        }
     });
-  });
+}
+
+function createJasmineInterface () {
+    var jasmine_helpers = require('cordova-plugin-test-framework.jasmine_helpers');
+    var jasmineInterface = jasmine_helpers.setUpJasmine();
+    return jasmineInterface;
+}
+
+function attachJasmineInterfaceToGlobal () {
+    var jasmineInterface = createJasmineInterface();
+    for (var property in jasmineInterface) {
+        window[property] = jasmineInterface[property];
+    }
+}
+
+function detachJasmineInterfaceFromGlobal () {
+    var jasmineInterface = createJasmineInterface();
+    for (var property in jasmineInterface) {
+        delete window[property];
+    }
+}
+
+exports.defineAutoTests = function () {
+    requireAllTestModules();
+    attachJasmineInterfaceToGlobal();
+
+    Object.keys(exports.tests).forEach(function (key) {
+        if (!exports.tests[key].getEnabled()) { return; }
+        if (!exports.tests[key].hasOwnProperty('defineAutoTests')) { return; }
+        exports.tests[key].defineAutoTests();
+    });
 };
 
-exports.init = function() {
-  requireAllTestModules();
+exports.defineManualTests = function (contentEl, beforeEach, createActionButton) {
+    requireAllTestModules();
+    detachJasmineInterfaceFromGlobal();
+
+    Object.keys(exports.tests).forEach(function (key) {
+        if (!exports.tests[key].getEnabled()) { return; }
+        if (!exports.tests[key].hasOwnProperty('defineManualTests')) { return; }
+        createActionButton(key, function () {
+            beforeEach(key);
+            exports.tests[key].defineManualTests(contentEl, createActionButton);
+        });
+    });
+};
+
+exports.init = function () {
+    requireAllTestModules();
 };

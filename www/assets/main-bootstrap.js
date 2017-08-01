@@ -19,8 +19,8 @@
  *
 */
 
-document.addEventListener("deviceready", function() {
-  'use strict';
+document.addEventListener('deviceready', function () {
+    'use strict';
 
-  cordova.require('cordova-plugin-test-framework.main').init();
+    cordova.require('cordova-plugin-test-framework.main').init(); // eslint-disable-line no-undef
 });

@@ -19,7 +19,6 @@
  *
 */
 
-/* jshint -W097 */
 'use strict';
 
 exports.logurl = 'http://127.0.0.1:7800';
@@ -27,28 +26,28 @@ exports.logurl = 'http://127.0.0.1:7800';
 exports.enabled = false;
 
 exports.load = function (callback) {
-  var cfg = null;
+    var cfg = null;
 
-  try {
+    try {
     // attempt to synchronously load medic config
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "../medic.json", false);
-    xhr.send(null);
-    cfg = JSON.parse(xhr.responseText);
-  } catch (ex) { }
+        var xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
+        xhr.open('GET', '../medic.json', false);
+        xhr.send(null);
+        cfg = JSON.parse(xhr.responseText);
+    } catch (ex) { }
 
-  // config is available
-  if (cfg) {
-    exports.logurl = cfg.couchdb || cfg.logurl;
-    exports.sha = cfg.sha;
-    exports.enabled = true;
-    console.log('Loaded Medic Config: logurl=' + exports.logurl);
-  } else {
+    // config is available
+    if (cfg) {
+        exports.logurl = cfg.couchdb || cfg.logurl;
+        exports.sha = cfg.sha;
+        exports.enabled = true;
+        console.log('Loaded Medic Config: logurl=' + exports.logurl);
+    } else {
     // config does not exist
-    console.log('Did not find medic config file');
-  }
+        console.log('Did not find medic config file');
+    }
 
-  setTimeout(function () {
-      callback();
-  }, 0);
+    setTimeout(function () {
+        callback();
+    }, 0);
 };
