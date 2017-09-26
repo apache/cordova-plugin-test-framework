@@ -62,6 +62,10 @@ Add a directory named `tests` to the root of your plugin. Within this directory,
 
 For example, the `cordova-plugin-device` plugin has this nested [`plugin.xml`](https://github.com/apache/cordova-plugin-device/blob/master/tests/plugin.xml).
 
+Create a `package.json` inside your project's `tests/` folder. Plugins require a `package.json` now and tests are considered their own plugins. The latest version of the tools ensure to run `npm install` on any plugin added to a project and pull in any dependencies. Therefore, plugin authors can now put npm dependencies around their tests into the `package.json` file.
+
+For example,the `cordova-plugin-device` plugin contains a [`package.json`](https://github.com/apache/cordova-plugin-device/blob/master/tests/package.json).
+
 The `cordova-plugin-test-framework` plugin will automatically find all `tests` modules across all plugins for which the nested tests plugin is installed.
 
 ### Defining Auto Tests
