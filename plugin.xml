@@ -22,7 +22,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-test-framework"
-    version="1.1.6-dev">
+    version="1.1.6">
     <name>Test Framework</name>
     <description>Cordova Test Framework Plugin</description>
     <license>Apache 2.0</license>

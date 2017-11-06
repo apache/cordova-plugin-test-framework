@@ -20,6 +20,10 @@
 -->
 # Release Notes
 
+### 1.1.6 (Nov 06, 2017)
+* [CB-12895](https://issues.apache.org/jira/browse/CB-12895) replaced `jshint` with `eslint`
+* [CB-12847](https://issues.apache.org/jira/browse/CB-12847) added `bugs` entry to `package.json`.
+
 ### 1.1.5 (Feb 28, 2017)
 * [CB-12236](https://issues.apache.org/jira/browse/CB-12236) - Fixed `RELEASENOTES` for `cordova-plugin-test-framework`
 
