@@ -20,8 +20,8 @@
 -->
 
 [![Build Status](https://travis-ci.org/apache/cordova-plugin-test-framework.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-test-framework)
-[![GitHub version](https://badge.fury.io/gh/apache%2Fcordova-plugin-test-framework.svg)](https://badge.fury.io/gh/apache%2Fcordova-plugin-test-framework)
-[![npm version](https://badge.fury.io/js/cordova-plugin-test-framework.svg)](https://badge.fury.io/js/cordova-plugin-test-framework) 
+[![GitHub version](https://badge.fury.io/gh/apache%2Fcordova-plugin-test-framework.svg)](https://github.com/apache/cordova-plugin-test-framework/releases)
+[![npm version](https://badge.fury.io/js/cordova-plugin-test-framework.svg)](https://www.npmjs.com/package/cordova-plugin-test-framework) 
 
 # Cordova Plugin Test Framework
 
