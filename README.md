@@ -23,10 +23,10 @@
 
 # Cordova Plugin Test Framework
 
-The `cordova-plugin-test-framework` plugin does two things:
+The `cordova-plugin-test-framework` plugin allows plugin authors to add tests (manual and automated) to their plugins. To achieve this it
 
-1. [Defines the interface for cordova plugins to write tests](#interface)
-2. [Provides a test harness for actually running those tests](#harness)
+1. [defines the interface for Cordova plugins to write tests](#interface) and 
+2. [provides a test harness for actually running those tests](#harness)
 
 Tests run directly inside existing Cordova projects, so you can rapidly switch between testing and development. You can also be sure that your test suite is testing the exact versions of plugins and platforms that your app is using.
 
