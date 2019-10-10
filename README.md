@@ -76,7 +76,7 @@ The `cordova-plugin-test-framework` plugin will automatically find all `tests` m
 
 ### Defining Auto Tests
 
-Export a function named `defineAutoTests`, which defines your auto-tests when run. Use the [`jasmine-2.0`](http://jasmine.github.io/2.0/introduction.html) format. E.g.:
+Export a function named `defineAutoTests`, which defines your auto-tests when run. Use the [`jasmine-2.9`](https://jasmine.github.io/2.9/introduction.html) format. E.g.:
 
 ```
 exports.defineAutoTests = function() {
@@ -87,12 +87,25 @@ exports.defineAutoTests = function() {
       ...
     });
 
-    it('do something async', function(done) {
+    it('do something async using callbacks', function(done) {
       setTimeout(function() {
         expect(1).toBe(1);
         ...
         done();
       }, 100);
+    });
+
+    it("do something async using promises", function() {
+      return soon().then(function() {
+        value++;
+        expect(value).toBeGreaterThan(0);
+      });
+    });
+
+    it("do something async using async/await", async function() {
+      await soon();
+      value++;
+      expect(value).toBeGreaterThan(0);
     });
   });
 
