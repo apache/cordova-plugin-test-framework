@@ -6,13 +6,8 @@
     "id": "cordova-plugin-test-framework",
     "platforms": []
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/apache/cordova-plugin-test-framework"
-  },
-  "bugs": {
-    "url": "https://issues.apache.org/jira/browse/CB"
-  },
+  "repository": "github:apache/cordova-plugin-test-framework",
+  "bugs": "https://github.com/apache/cordova-plugin-test-framework/issues",
   "keywords": [
     "cordova",
     "test",
