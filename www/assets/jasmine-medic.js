@@ -19,9 +19,6 @@
  *
 */
 
-/* global device */
-/* eslint no-undef : 0 */
-
 jasmineRequire.medic = function (j$) {
     j$.MedicReporter = jasmineRequire.MedicReporter(j$);
 };
@@ -34,7 +31,7 @@ jasmineRequire.MedicReporter = function (j$) {
 
     var platformMap = {
         'ipod touch': 'ios',
-        'iphone': 'ios'
+        iphone: 'ios'
     };
 
     function MedicReporter (options) {
@@ -42,15 +39,15 @@ jasmineRequire.MedicReporter = function (j$) {
         var timer = options.timer || noopTimer;
         var results = [];
         var specsExecuted = 0;
-        var failureCount = 0; // eslint-disable-line no-unused-vars
-        var pendingSpecCount = 0; // eslint-disable-line no-unused-vars
+        var failureCount = 0;
+        var pendingSpecCount = 0; // eslint-disable-line
 
         var serverurl = logoptions.logurl;
 
         this.initialize = function () {
         };
 
-        var totalSpecsDefined; // eslint-disable-line no-unused-vars
+        var totalSpecsDefined;  // eslint-disable-line
         this.jasmineStarted = function (options) {
             totalSpecsDefined = options.totalSpecsDefined || 0;
             timer.start();
@@ -82,7 +79,7 @@ jasmineRequire.MedicReporter = function (j$) {
         };
 
         var buildResults = function () {
-            var json = {specs: specsExecuted, failures: failureCount, results: results};
+            var json = { specs: specsExecuted, failures: failureCount, results: results };
             return json;
         };
 
@@ -98,13 +95,12 @@ jasmineRequire.MedicReporter = function (j$) {
 
             this.postTests({
                 mobilespec: buildResults(),
-                platform: (platformMap.hasOwnProperty(p) ? platformMap[p] : p),
+                platform: (Object.prototype.hasOwnProperty.call(platformMap, p) ? platformMap[p] : p),
                 version: version,
                 sha: options.sha,
                 timestamp: Math.round(Math.floor((new Date()).getTime() / 1000)),
                 model: devmodel
             });
-
         };
 
         this.postTests = function (json) {

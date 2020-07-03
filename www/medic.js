@@ -30,7 +30,7 @@ exports.load = function (callback) {
 
     try {
     // attempt to synchronously load medic config
-        var xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
+        var xhr = new XMLHttpRequest();
         xhr.open('GET', '../medic.json', false);
         xhr.send(null);
         cfg = JSON.parse(xhr.responseText);
