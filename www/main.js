@@ -19,8 +19,6 @@
  *
 */
 
-/* global WinJS */
-/* eslint no-undef : 0 */
 'use strict';
 
 var LOG_HEADER_HEIGHT = 20;
@@ -38,11 +36,11 @@ function getMode (callback) {
 
 function setMode (mode) {
     var handlers = {
-        'main': runMain,
-        'auto': runAutoTests,
-        'manual': runManualTests
+        main: runMain,
+        auto: runAutoTests,
+        manual: runManualTests
     };
-    if (!handlers.hasOwnProperty(mode)) {
+    if (!Object.prototype.hasOwnProperty.call(handlers, mode)) {
         console.error('Unsupported mode: ' + mode);
         console.error("Defaulting to 'main'");
         mode = 'main';
@@ -350,7 +348,7 @@ function toggleTestEnabled (checkbox) {
 function iterateAutoTests (cdvtests, callback) {
     Object.keys(cdvtests.tests).forEach(function (api) {
         var testModule = cdvtests.tests[api];
-        if (!testModule.hasOwnProperty('defineAutoTests')) {
+        if (!Object.prototype.hasOwnProperty.call(testModule, 'defineAutoTests')) {
             return;
         }
         callback(api, testModule);
@@ -413,7 +411,7 @@ function runMain () {
 
     if (isWin && typeof WinJS !== 'undefined') {
         var app = WinJS.Application;
-        app.addEventListener('error', function (err) { // eslint-disable-line handle-callback-err
+        app.addEventListener('error', function () {
             // We do not want an unhandled exception to crash the test app
             // Returning true marks it as being handled
             return true;

@@ -27,7 +27,7 @@ function TestModule (api) {
     var name = api;
     var enabled = true;
 
-    var enabledPref = localStorage.getItem('cordova-tests-enabled-' + name); // eslint-disable-line no-undef
+    var enabledPref = localStorage.getItem('cordova-tests-enabled-' + name);
     if (enabledPref) {
         enabled = (enabledPref === true.toString());
     }
@@ -38,7 +38,7 @@ function TestModule (api) {
 
     this.setEnabled = function (isEnabled) {
         enabled = isEnabled;
-        localStorage.setItem('cordova-tests-enabled-' + name, enabled); // eslint-disable-line no-undef
+        localStorage.setItem('cordova-tests-enabled-' + name, enabled);
     };
 }
 
@@ -49,7 +49,7 @@ function getTestsObject (api) {
 
 function requireAllTestModules () {
     // This finds all js-modules named "tests" (regardless of plugins they came from)
-    var test_modules = cordova.require('cordova/plugin_list') // eslint-disable-line no-undef
+    var test_modules = cordova.require('cordova/plugin_list')
         .map(function (jsmodule) {
             return jsmodule.id;
         })
@@ -60,20 +60,19 @@ function requireAllTestModules () {
     // Map auto / manual test definitions for each, but without actually running the handlers
     test_modules.forEach(function (id) {
         try {
-            var plugintests = cordova.require(id); // eslint-disable-line no-undef
+            var plugintests = cordova.require(id);
 
-            if (plugintests.hasOwnProperty('defineAutoTests')) {
+            if (Object.prototype.hasOwnProperty.call(plugintests, 'defineAutoTests')) {
                 getTestsObject(id).defineAutoTests = function () {
-                    describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests)); // eslint-disable-line no-undef
+                    describe(id + ' >>', plugintests.defineAutoTests.bind(plugintests));
                 };
             }
 
-            if (plugintests.hasOwnProperty('defineManualTests')) {
+            if (Object.prototype.hasOwnProperty.call(plugintests, 'defineManualTests')) {
                 getTestsObject(id).defineManualTests = plugintests.defineManualTests.bind(plugintests);
             }
         } catch (ex) {
             console.warn('Failed to load tests: ', id);
-
         }
     });
 }
@@ -104,7 +103,7 @@ exports.defineAutoTests = function () {
 
     Object.keys(exports.tests).forEach(function (key) {
         if (!exports.tests[key].getEnabled()) { return; }
-        if (!exports.tests[key].hasOwnProperty('defineAutoTests')) { return; }
+        if (!Object.prototype.hasOwnProperty.call(exports.tests[key], 'defineAutoTests')) { return; }
         exports.tests[key].defineAutoTests();
     });
 };
@@ -115,7 +114,7 @@ exports.defineManualTests = function (contentEl, beforeEach, createActionButton)
 
     Object.keys(exports.tests).forEach(function (key) {
         if (!exports.tests[key].getEnabled()) { return; }
-        if (!exports.tests[key].hasOwnProperty('defineManualTests')) { return; }
+        if (!Object.prototype.hasOwnProperty.call(exports.tests[key], 'defineManualTests')) { return; }
         createActionButton(key, function () {
             beforeEach(key);
             exports.tests[key].defineManualTests(contentEl, createActionButton);
