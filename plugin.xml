@@ -37,4 +37,10 @@
 
     <asset src="www/assets" target="cdvtests" />
 
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <preference name="scheme" value="app" />
+            <preference name="hostname" value="localhost" />
+        </config-file>
+    </platform>
 </plugin>
