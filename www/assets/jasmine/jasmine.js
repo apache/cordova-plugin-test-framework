@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008-2018 Pivotal Labs
+Copyright (c) 2008-2020 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -903,8 +903,10 @@ getJasmineRequireObj().Env = function(j$) {
 
     // TODO: fix this naming, and here's where the value comes in
     this.catchExceptions = function(value) {
-      this.deprecated('The catchExceptions option is deprecated and will be replaced with stopOnSpecFailure in Jasmine 3.0');
       catchExceptions = !!value;
+      if (!catchExceptions) {
+        this.deprecated('The catchExceptions option is deprecated and will be replaced with stopOnSpecFailure in Jasmine 3.0');
+      }
       return catchExceptions;
     };
 
@@ -5580,5 +5582,5 @@ getJasmineRequireObj().UserContext = function(j$) {
 };
 
 getJasmineRequireObj().version = function() {
-  return '2.99.0';
+  return '2.99.2';
 };
