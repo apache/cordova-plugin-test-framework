@@ -19,7 +19,7 @@
 #
 -->
 
-[![Build Status](https://travis-ci.org/apache/cordova-plugin-test-framework.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-test-framework)
+[![Node CI](https://github.com/apache/cordova-plugin-test-framework/workflows/Node%20CI/badge.svg?branch=master)](https://github.com/apache/cordova-plugin-test-framework/actions?query=branch%3Amaster)
 [![GitHub version](https://badge.fury.io/gh/apache%2Fcordova-plugin-test-framework.svg)](https://github.com/apache/cordova-plugin-test-framework/releases)
 [![npm version](https://badge.fury.io/js/cordova-plugin-test-framework.svg)](https://www.npmjs.com/package/cordova-plugin-test-framework) 
 
