@@ -43,4 +43,13 @@
             <preference name="hostname" value="localhost" />
         </config-file>
     </platform>
+
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <preference name="AndroidInsecureFileModeEnabled" value="true" />
+        </config-file>
+        <edit-config xmlns:android="http://schemas.android.com/apk/res/android" file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:usesCleartextTraffic="true" />
+        </edit-config>
+    </platform>
 </plugin>
