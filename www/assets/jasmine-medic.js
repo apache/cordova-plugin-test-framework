@@ -79,7 +79,7 @@ jasmineRequire.MedicReporter = function (j$) {
         };
 
         var buildResults = function () {
-            var json = { specs: specsExecuted, failures: failureCount, results: results };
+            var json = { specs: specsExecuted, failures: failureCount, results };
             return json;
         };
 
@@ -96,7 +96,7 @@ jasmineRequire.MedicReporter = function (j$) {
             this.postTests({
                 mobilespec: buildResults(),
                 platform: (Object.prototype.hasOwnProperty.call(platformMap, p) ? platformMap[p] : p),
-                version: version,
+                version,
                 sha: options.sha,
                 timestamp: Math.round(Math.floor((new Date()).getTime() / 1000)),
                 model: devmodel
