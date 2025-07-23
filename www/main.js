@@ -171,7 +171,7 @@ function createActionButton (title, callback, appendTo) {
         e.preventDefault();
         callback();
     };
-    button.classList.add('topcoat-button');
+    button.classList.add('cdv-btn');
     div.appendChild(button);
     buttons.appendChild(div);
 }
@@ -217,15 +217,13 @@ function createEnablerList () {
     enablerList.id = 'test-list';
 
     // Create select/deselect all buttons (in button bar)
-    var checkButtonBar = document.createElement('ul');
-    checkButtonBar.classList.add('topcoat-button-bar');
+    var checkButtonBar = document.createElement('div');
+    checkButtonBar.classList.add('button-group');
+    checkButtonBar.role = 'group';
 
     function createSelectToggleButton (title, selected) {
-        var barItem = document.createElement('li');
-        barItem.classList.add('topcoat-button-bar__item');
-
         var link = document.createElement('a');
-        link.classList.add('topcoat-button-bar__button');
+        link.classList.add('cdv-btn');
         link.innerText = title;
         link.href = null;
         link.onclick = function (e) {
@@ -234,9 +232,9 @@ function createEnablerList () {
             return false;
         };
 
-        barItem.appendChild(link);
-        checkButtonBar.appendChild(barItem);
+        checkButtonBar.appendChild(link);
     }
+
     createSelectToggleButton('Check all', true);
     createSelectToggleButton('Uncheck all', false);
     enablerList.appendChild(checkButtonBar);
@@ -301,9 +299,10 @@ function createEnablerCheckbox (api, title, isEnabled, appendTo, callback) {
     var container = document.getElementById(appendTo);
 
     var label = document.createElement('label');
-    label.classList.add('topcoat-checkbox');
+    label.classList.add('form-check-label');
 
     var checkbox = document.createElement('input');
+    checkbox.classList.add('form-check-input');
     checkbox.type = 'checkbox';
     checkbox.value = api;
     checkbox.checked = isEnabled;
@@ -315,8 +314,6 @@ function createEnablerCheckbox (api, title, isEnabled, appendTo, callback) {
     };
 
     var div = document.createElement('div');
-    div.classList.add('topcoat-checkbox__checkmark');
-
     var text = document.createElement('span');
     text.innerText = title;
 
