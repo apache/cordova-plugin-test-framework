@@ -23,3 +23,7 @@ globals:
   describe: true
   jasmineRequire: true
   device: true
+
+overrides:
+  - files: [scripts/**/*.js]
+    extends: '@cordova/eslint-config/node'
