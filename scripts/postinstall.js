@@ -17,35 +17,11 @@
     under the License.
 */
 
-'use strict';
+const { cpSync, rmSync } = require('node:fs');
+const path = require('node:path');
 
-exports.logurl = 'http://127.0.0.1:7800';
+const jasmineSrc = path.join(path.dirname(require.resolve('jasmine-core')), 'jasmine-core');
+const jasmineDest = path.join(__dirname, '..', 'www', 'assets', 'jasmine');
 
-exports.enabled = false;
-
-exports.load = function (callback) {
-    var cfg = null;
-
-    try {
-    // attempt to synchronously load medic config
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '../medic.json', false);
-        xhr.send(null);
-        cfg = JSON.parse(xhr.responseText);
-    } catch (ex) { }
-
-    // config is available
-    if (cfg) {
-        exports.logurl = cfg.couchdb || cfg.logurl;
-        exports.sha = cfg.sha;
-        exports.enabled = true;
-        console.log('Loaded Medic Config: logurl=' + exports.logurl);
-    } else {
-    // config does not exist
-        console.log('Did not find medic config file');
-    }
-
-    setTimeout(function () {
-        callback();
-    }, 0);
-};
+cpSync(jasmineSrc, jasmineDest, { recursive: true, force: true });
+rmSync(path.join(jasmineDest, 'example'), { recursive: true, force: true });

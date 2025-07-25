@@ -15,11 +15,15 @@
   ],
   "scripts": {
     "test": "npm run lint",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "node scripts/postinstall.js"
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "devDependencies": {
     "@cordova/eslint-config": "^5.1.0"
+  },
+  "dependencies": {
+    "jasmine-core": "^5.9.0"
   }
 }

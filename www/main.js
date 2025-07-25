@@ -1,22 +1,20 @@
 /*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 */
 
 'use strict';
@@ -171,7 +169,7 @@ function createActionButton (title, callback, appendTo) {
         e.preventDefault();
         callback();
     };
-    button.classList.add('topcoat-button');
+    button.classList.add('cdv-btn');
     div.appendChild(button);
     buttons.appendChild(div);
 }
@@ -217,15 +215,13 @@ function createEnablerList () {
     enablerList.id = 'test-list';
 
     // Create select/deselect all buttons (in button bar)
-    var checkButtonBar = document.createElement('ul');
-    checkButtonBar.classList.add('topcoat-button-bar');
+    var checkButtonBar = document.createElement('div');
+    checkButtonBar.classList.add('button-group');
+    checkButtonBar.role = 'group';
 
     function createSelectToggleButton (title, selected) {
-        var barItem = document.createElement('li');
-        barItem.classList.add('topcoat-button-bar__item');
-
         var link = document.createElement('a');
-        link.classList.add('topcoat-button-bar__button');
+        link.classList.add('cdv-btn');
         link.innerText = title;
         link.href = null;
         link.onclick = function (e) {
@@ -234,9 +230,9 @@ function createEnablerList () {
             return false;
         };
 
-        barItem.appendChild(link);
-        checkButtonBar.appendChild(barItem);
+        checkButtonBar.appendChild(link);
     }
+
     createSelectToggleButton('Check all', true);
     createSelectToggleButton('Uncheck all', false);
     enablerList.appendChild(checkButtonBar);
@@ -301,9 +297,10 @@ function createEnablerCheckbox (api, title, isEnabled, appendTo, callback) {
     var container = document.getElementById(appendTo);
 
     var label = document.createElement('label');
-    label.classList.add('topcoat-checkbox');
+    label.classList.add('form-check-label');
 
     var checkbox = document.createElement('input');
+    checkbox.classList.add('form-check-input');
     checkbox.type = 'checkbox';
     checkbox.value = api;
     checkbox.checked = isEnabled;
@@ -315,8 +312,6 @@ function createEnablerCheckbox (api, title, isEnabled, appendTo, callback) {
     };
 
     var div = document.createElement('div');
-    div.classList.add('topcoat-checkbox__checkmark');
-
     var text = document.createElement('span');
     text.innerText = title;
 
