@@ -23,10 +23,11 @@
     <head>
         <!--
         Inject CSP
-
-        If not hosted in mobilespec, the injection script will likely not
-        exist.  It would be up to the hosting app to provide the named
-        script to setup CSP as desired.
+        csp-incl.js will only be injected by cordova-mobile-spec, see:
+        https://github.com/apache/cordova-mobile-spec/blob/master/www/csp-incl.js
+        If not hosted in cordova-mobile-spec, the injection script will
+        likely not exist and produce a 404. It would be up to the hosting
+        app to provide the named script to setup CSP as desired.
         -->
         <script type="text/javascript" src="../csp-incl.js"></script>
 
