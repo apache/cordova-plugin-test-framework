@@ -21,6 +21,15 @@
 -->
 <html>
     <head>
+        <!--
+        Inject CSP
+
+        If not hosted in mobilespec, the injection script will likely not
+        exist.  It would be up to the hosting app to provide the named
+        script to setup CSP as desired.
+        -->
+        <script type="text/javascript" src="../csp-incl.js"></script>
+
         <title>Cordova tests</title>
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
