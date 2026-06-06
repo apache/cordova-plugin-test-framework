@@ -41,6 +41,15 @@
 
         <script type="text/javascript" src="jasmine/jasmine.js"></script>
         <script type="text/javascript" src="jasmine/jasmine-html.js"></script>
+        <!--
+        In Jasmine 3.10.0 and newer versions, the classic boot.js was
+        split into two files: boot0.js and boot1.js.
+        boot0.js is the first file loaded in a standalone Jasmine test environment,
+        responsible for creating the execution environment and exposing the global testing functions.
+        boot1.js is intentionally not loaded. If boot1.js were included, it would auto-run specs on
+        window load. But this project waits for Cordova setup and then runs tests manually via
+        Jasmine env execute in www/main.js, after app init flow from www/assets/main-bootstrap.js.
+        -->
         <script type="text/javascript" src="jasmine/boot0.js"></script>
         <script type="text/javascript" src="jasmine-medic.js"></script>
 
