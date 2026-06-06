@@ -23,10 +23,11 @@
     <head>
         <!--
         Inject CSP
-
-        If not hosted in mobilespec, the injection script will likely not
-        exist.  It would be up to the hosting app to provide the named
-        script to setup CSP as desired.
+        csp-incl.js will only be injected by cordova-mobile-spec, see:
+        https://github.com/apache/cordova-mobile-spec/blob/master/www/csp-incl.js
+        If not hosted in cordova-mobile-spec, the injection script will
+        likely not exist and produce a 404. It would be up to the hosting
+        app to provide the named script to setup CSP as desired.
         -->
         <script type="text/javascript" src="../csp-incl.js"></script>
 
@@ -35,14 +36,21 @@
         <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
 
-        <link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.min.css">
-
         <link rel="stylesheet" type="text/css" href="jasmine/jasmine.css" media="screen">
         <link rel="stylesheet" type="text/css" href="main.css" media="screen">
 
-        <script type="text/javascript" src="bootstrap/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="jasmine/jasmine.js"></script>
         <script type="text/javascript" src="jasmine/jasmine-html.js"></script>
+        <!--
+        In Jasmine 3.10.0 and newer versions, the classic boot.js was
+        split into two files: boot0.js and boot1.js.
+        boot0.js is the first file loaded in a standalone Jasmine test environment,
+        responsible for creating the execution environment and exposing the global testing functions.
+        boot1.js is intentionally not loaded. If boot1.js were included, it would auto-run specs on
+        window load. But this project waits for Cordova setup and then runs tests manually via
+        Jasmine env execute in www/main.js, after app init flow from www/assets/main-bootstrap.js.
+        -->
+        <script type="text/javascript" src="jasmine/boot0.js"></script>
         <script type="text/javascript" src="jasmine-medic.js"></script>
 
         <script type="text/javascript" src="../cordova.js"></script>
